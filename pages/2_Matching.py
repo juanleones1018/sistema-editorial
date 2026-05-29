@@ -350,26 +350,25 @@ if full_query.strip():
 
             "Nombre":
                 row["full_name"],
-
+        
+            "Correo":
+                row["email"],
+        
             "Institución":
                 row["institution"],
-
+        
             "País":
                 row["country"],
-
+        
             "Nivel":
-                row[
-                    "academic_degree_level"
-                ],
-
+                row["academic_degree_level"],
+        
             "Última publicación":
-                row[
-                    "last_publication_year"
-                ],
-
+                row["last_publication_year"],
+        
             "Score":
                 round(final_score, 1),
-
+        
             "Tema":
                 topic[:300]
         })
@@ -441,6 +440,9 @@ if full_query.strip():
 
                     st.info(
                         f"""
+                 st.markdown(
+    f"📧 **{row['Correo']}**"
+)
 📅 {row['Última publicación']}
 """
                     )
@@ -508,3 +510,13 @@ else:
     st.info(
         "Escribe un tema para iniciar matching"
     )
+    st.text_input(
+
+    "Correo",
+
+    value=row["Correo"],
+
+    disabled=True,
+
+    key=f"email_{idx}"
+)

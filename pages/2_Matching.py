@@ -428,7 +428,7 @@ for idx, row in results_df.iterrows():
 
                 value=row["Correo"],
 
-                disabled=True,
+               
 
                 key=f"email_{idx}"
             )

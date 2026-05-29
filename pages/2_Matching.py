@@ -398,114 +398,114 @@ if full_query.strip():
 # CARDS
 # =========================
 
-for idx, row in results_df.iterrows():
-
-    with st.container():
-
-        top, bottom = st.columns([5, 1])
-
-        # =========================
-        # IZQUIERDA
-        # =========================
-
-        with top:
-
-            st.markdown(
-                f"### 👨‍🏫 {row['Nombre']}"
-            )
-
-            st.caption(
-                f"🏛 {row['Institución']} • 🌎 {row['País']}"
-            )
-
+    for idx, row in results_df.iterrows():
+    
+        with st.container():
+    
+            top, bottom = st.columns([5, 1])
+    
             # =========================
-            # CORREO
+            # IZQUIERDA
             # =========================
-
-            st.text_input(
-
-                "📧 Correo de contacto",
-
-                value=row["Correo"],
-
-               
-
-                key=f"email_{idx}"
-            )
-
-            badge1, badge2, badge3 = st.columns(3)
-
-            with badge1:
-
-                st.success(
-                    row["Nivel"]
+    
+            with top:
+    
+                st.markdown(
+                    f"### 👨‍🏫 {row['Nombre']}"
                 )
-
-            with badge2:
-
-                st.info(
-                    f"📅 {row['Última publicación']}"
+    
+                st.caption(
+                    f"🏛 {row['Institución']} • 🌎 {row['País']}"
                 )
-
-            with badge3:
-
-                if row["Score"] >= 80:
-
+    
+                # =========================
+                # CORREO
+                # =========================
+    
+                st.text_input(
+    
+                    "📧 Correo de contacto",
+    
+                    value=row["Correo"],
+    
+                   
+    
+                    key=f"email_{idx}"
+                )
+    
+                badge1, badge2, badge3 = st.columns(3)
+    
+                with badge1:
+    
                     st.success(
-                        "Alta afinidad"
+                        row["Nivel"]
                     )
-
-                elif row["Score"] >= 60:
-
-                    st.warning(
-                        "Afinidad media"
+    
+                with badge2:
+    
+                    st.info(
+                        f"📅 {row['Última publicación']}"
                     )
-
-                else:
-
-                    st.error(
-                        "Afinidad baja"
-                    )
-
-        # =========================
-        # DERECHA
-        # =========================
-
-        with bottom:
-
-            st.metric(
-                "Score",
-                f"{row['Score']}"
+    
+                with badge3:
+    
+                    if row["Score"] >= 80:
+    
+                        st.success(
+                            "Alta afinidad"
+                        )
+    
+                    elif row["Score"] >= 60:
+    
+                        st.warning(
+                            "Afinidad media"
+                        )
+    
+                    else:
+    
+                        st.error(
+                            "Afinidad baja"
+                        )
+    
+            # =========================
+            # DERECHA
+            # =========================
+    
+            with bottom:
+    
+                st.metric(
+                    "Score",
+                    f"{row['Score']}"
+                )
+    
+            # =========================
+            # BARRA SCORE
+            # =========================
+    
+            st.progress(
+                min(
+                    row["Score"] / 100,
+                    1.0
+                )
             )
-
-        # =========================
-        # BARRA SCORE
-        # =========================
-
-        st.progress(
-            min(
-                row["Score"] / 100,
-                1.0
-            )
+    
+            # =========================
+            # TEMA
+            # =========================
+    
+            with st.expander(
+                "🔬 Ver tema de investigación"
+            ):
+    
+                st.write(
+                    row["Tema"]
+                )
+    
+            st.divider()
+    
+    else:
+    
+        st.info(
+            "Escribe un tema para iniciar matching"
         )
-
-        # =========================
-        # TEMA
-        # =========================
-
-        with st.expander(
-            "🔬 Ver tema de investigación"
-        ):
-
-            st.write(
-                row["Tema"]
-            )
-
-        st.divider()
-
-else:
-
-    st.info(
-        "Escribe un tema para iniciar matching"
-    )
    

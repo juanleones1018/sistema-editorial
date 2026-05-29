@@ -394,129 +394,118 @@ if full_query.strip():
         "🏆 Mejores coincidencias"
     )
 
-    # =========================
-    # CARDS
-    # =========================
+   # =========================
+# CARDS
+# =========================
 
-    for idx, row in (
-        results_df.iterrows()
-    ):
+for idx, row in results_df.iterrows():
 
-        with st.container():
+    with st.container():
 
-            top, bottom = st.columns(
-                [5, 1]
-            )
+        top, bottom = st.columns([5, 1])
 
-            # =========================
-            # IZQUIERDA
-            # =========================
+        # =========================
+        # IZQUIERDA
+        # =========================
 
-            with top:
-
-                st.markdown(
-                    f"""
-### {row['Nombre']}
-"""
-                )
-
-                st.caption(
-                    f"""
-🏛 {row['Institución']} • 🌎 {row['País']}
-"""
-                )
-
-                badge1, badge2, badge3 = (
-                    st.columns(3)
-                )
-
-                with badge1:
-
-                    st.success(
-                        row["Nivel"]
-                    )
-
-                with badge2:
-
-                    st.info(
-                        f"""
-                 st.markdown(
-    f"📧 **{row['Correo']}**"
-)
-📅 {row['Última publicación']}
-"""
-                    )
-
-                with badge3:
-
-                    if row["Score"] >= 80:
-
-                        st.success(
-                            "Alta afinidad"
-                        )
-
-                    elif row["Score"] >= 60:
-
-                        st.warning(
-                            "Afinidad media"
-                        )
-
-                    else:
-
-                        st.error(
-                            "Afinidad baja"
-                        )
-
-            # =========================
-            # DERECHA
-            # =========================
-
-            with bottom:
-
-                st.metric(
-                    "Score",
-                    f"{row['Score']}"
-                )
-
-            # =========================
-            # BARRA SCORE
-            # =========================
-
-            st.progress(
-                min(
-                    row["Score"] / 100,
-                    1.0
-                )
-            )
-
-            # =========================
-            # TEMA
-            # =========================
+        with top:
 
             st.markdown(
-                f"""
-**Tema investigación**
-"""
+                f"### 👨‍🏫 {row['Nombre']}"
             )
+
+            st.caption(
+                f"🏛 {row['Institución']} • 🌎 {row['País']}"
+            )
+
+            # =========================
+            # CORREO
+            # =========================
+
+            st.text_input(
+
+                "📧 Correo de contacto",
+
+                value=row["Correo"],
+
+                disabled=True,
+
+                key=f"email_{idx}"
+            )
+
+            badge1, badge2, badge3 = st.columns(3)
+
+            with badge1:
+
+                st.success(
+                    row["Nivel"]
+                )
+
+            with badge2:
+
+                st.info(
+                    f"📅 {row['Última publicación']}"
+                )
+
+            with badge3:
+
+                if row["Score"] >= 80:
+
+                    st.success(
+                        "Alta afinidad"
+                    )
+
+                elif row["Score"] >= 60:
+
+                    st.warning(
+                        "Afinidad media"
+                    )
+
+                else:
+
+                    st.error(
+                        "Afinidad baja"
+                    )
+
+        # =========================
+        # DERECHA
+        # =========================
+
+        with bottom:
+
+            st.metric(
+                "Score",
+                f"{row['Score']}"
+            )
+
+        # =========================
+        # BARRA SCORE
+        # =========================
+
+        st.progress(
+            min(
+                row["Score"] / 100,
+                1.0
+            )
+        )
+
+        # =========================
+        # TEMA
+        # =========================
+
+        with st.expander(
+            "🔬 Ver tema de investigación"
+        ):
 
             st.write(
                 row["Tema"]
             )
 
-            st.divider()
+        st.divider()
 
 else:
 
     st.info(
         "Escribe un tema para iniciar matching"
     )
-    st.text_input(
-
-    "Correo",
-
-    value=row["Correo"],
-
-    disabled=True,
-
-    key=f"email_{idx}"
-)
+   

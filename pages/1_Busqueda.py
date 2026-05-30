@@ -1,6 +1,12 @@
 import streamlit as st
 import pandas as pd
+from utils.auth import (
+    login
+)
 
+if not login():
+
+    st.stop()
 from utils.reviewers import (
     load_reviewers,
     update_reviewer,
@@ -12,6 +18,7 @@ from utils.layout import (
 
     render_sidebar
 )
+
 setup_page(
     "Búsqueda"
 )

@@ -109,3 +109,20 @@ def insert_activity(
     )
 
     return response
+from utils.db import supabase
+
+
+def insert_reviewer(data):
+
+    response = (
+
+        supabase
+
+        .table("reviewers")
+
+        .insert(data)
+
+        .execute()
+    )
+
+    return response

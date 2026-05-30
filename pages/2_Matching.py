@@ -1,6 +1,12 @@
 import streamlit as st
 import pandas as pd
+from utils.auth import (
+    login
+)
 
+if not login():
+
+    st.stop()
 from rapidfuzz import fuzz
 
 from utils.reviewers import (

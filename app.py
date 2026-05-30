@@ -5,7 +5,13 @@ import plotly.express as px
 from utils.reviewers import (
     load_reviewers
 )
+from utils.auth import (
+    login
+)
 
+if not login():
+
+    st.stop()
 # =========================
 # CONFIG
 # =========================

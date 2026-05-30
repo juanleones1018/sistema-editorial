@@ -33,11 +33,17 @@ def setup_page(title):
     """
 
     st.markdown(
+    """
+    <style>
 
-        hide_streamlit_style,
+    [data-testid="stSidebarNav"] {
+        display: none;
+    }
 
-        unsafe_allow_html=True
-    )
+    </style>
+    """,
+    unsafe_allow_html=True
+)
 
 # =========================
 # SIDEBAR

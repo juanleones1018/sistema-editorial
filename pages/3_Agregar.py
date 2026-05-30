@@ -1,5 +1,11 @@
 import streamlit as st
+from utils.auth import (
+    login
+)
 
+if not login():
+
+    st.stop()
 from utils.layout import (
     setup_page,
     render_sidebar

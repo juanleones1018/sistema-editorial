@@ -118,3 +118,10 @@ def render_sidebar():
         st.success(
             "🚀 Sistema activo"
         )
+        if st.button(
+    "🚪 Cerrar sesión"
+            ):
+            
+                st.session_state.clear()
+            
+                st.rerun()

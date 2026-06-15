@@ -165,7 +165,6 @@ with right:
     )
 
     st.divider()
-    st.divider()
 
 st.markdown(
     "### 🎯 Presets editoriales"
@@ -272,7 +271,7 @@ else:
         10
     )
     
-    total_weight = (
+total_weight = (
     
         thematic_weight
     

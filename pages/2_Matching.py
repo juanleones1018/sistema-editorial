@@ -5,6 +5,7 @@ from utils.auth import (
 )
 
 if not login():
+    st.stop()
 from utils.matching import (
     calculate_match_score
 )

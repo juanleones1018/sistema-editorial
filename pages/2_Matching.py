@@ -167,43 +167,44 @@ with right:
     st.divider()
 
     st.markdown(
-        "### 📊 Criterios"
+    "### 📊 Criterios"
     )
-
+    
     thematic_weight = st.slider(
-
+    
         "Afinidad temática",
-
+    
         0,
-
+    
         100,
-
-        70
+    
+        60
     )
-
+    
     publication_weight = st.slider(
-
+    
         "Publicaciones",
-
+    
         0,
-
+    
         100,
-
-        30
+    
+        20
     )
-
+    
     activity_weight = st.slider(
-
+    
         "Actividad reciente",
     
         0,
     
         100,
     
-        15
+        10
     )
+    
     evidence_weight = st.slider(
-
+    
         "Evidencia automática",
     
         0,
@@ -212,6 +213,40 @@ with right:
     
         10
     )
+    
+    total_weight = (
+    
+        thematic_weight
+    
+        +
+    
+        publication_weight
+    
+        +
+    
+        activity_weight
+    
+        +
+    
+        evidence_weight
+    )
+
+    if total_weight != 100:
+    
+        st.error(
+    
+            f"""
+    Los criterios deben sumar exactamente 100%.
+    
+    Actualmente suman {total_weight}%.
+    """
+        )
+    
+    else:
+    
+        st.success(
+            "✅ Configuración válida"
+        )
     st.divider()
 
     st.info(
@@ -314,7 +349,7 @@ full_query = (
 # MATCHING
 # =========================
 
-if full_query.strip():
+if full_query.strip() and total_weight == 100:
 
     scores = []
 

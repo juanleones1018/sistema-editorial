@@ -303,7 +303,7 @@ else:
         st.success(
             "✅ Configuración válida"
         )
-    st.info(
+st.info(
         f"""
     📊 Configuración actual:
     

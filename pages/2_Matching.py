@@ -45,7 +45,7 @@ def get_data():
     return load_reviewers()
 
 df = get_data()
-
+status_dict = load_reviewer_statuses()
 # =========================
 # VALIDAR
 # =========================
@@ -265,21 +265,17 @@ if selected_degree != "Todos":
     ]
 if only_active:
 
-    active_ids = []
+    active_ids = [
 
-    for _, reviewer in filtered_df.iterrows():
+        reviewer_id
 
-        status, _ = get_reviewer_status(
+        for reviewer_id, (
+            status,
+            _
+        ) in status_dict.items()
 
-            reviewer["id"]
-        )
-
-        if status == "🟢 Activo":
-
-            active_ids.append(
-
-                reviewer["id"]
-            )
+        if status == "🟢 Activo"
+    ]
 
     filtered_df = filtered_df[
 
@@ -341,9 +337,14 @@ if full_query.strip():
             publication_weight
         )
 
-        status, source = get_reviewer_status(
+        status, source = status_dict.get(
 
-            row["id"]
+            row["id"],
+        
+            (
+                "🟡 Sin verificar",
+                None
+            )
         )
 
         # =========================

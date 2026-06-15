@@ -165,148 +165,110 @@ with right:
     )
 
     st.divider()
-    st.markdown(
+    st.divider()
+
+st.markdown(
     "### 🎯 Presets editoriales"
-        )
-        
-        preset = st.selectbox(
-        
-            "Selecciona una estrategia",
-        
-            [
-        
-                "Personalizado",
-        
-                "⚖️ Equilibrado",
-        
-                "🎓 Especialista",
-        
-                "⚡ Disponibilidad",
-        
-                "📚 Trayectoria académica"
-        
-            ]
-        )
-    if preset == "⚖️ Equilibrado":
+)
+
+preset = st.selectbox(
+
+    "Selecciona una estrategia",
+
+    [
+
+        "Personalizado",
+
+        "⚖️ Equilibrado",
+
+        "🎓 Especialista",
+
+        "⚡ Disponibilidad",
+
+        "📚 Trayectoria académica"
+
+    ]
+)
+
+# =========================
+# PESOS
+# =========================
+
+if preset == "⚖️ Equilibrado":
 
     thematic_weight = 60
     publication_weight = 20
     activity_weight = 10
     evidence_weight = 10
-    
-    elif preset == "🎓 Especialista":
-    
-        thematic_weight = 80
-        publication_weight = 10
-        activity_weight = 5
-        evidence_weight = 5
-    
-    elif preset == "⚡ Disponibilidad":
-    
-        thematic_weight = 40
-        publication_weight = 20
-        activity_weight = 25
-        evidence_weight = 15
-    
-    elif preset == "📚 Trayectoria académica":
-    
-        thematic_weight = 50
-        publication_weight = 35
-        activity_weight = 5
-        evidence_weight = 10
-    
-    else:
-    
-        thematic_weight = st.slider(
-    
-            "Afinidad temática",
-    
-            0,
-    
-            100,
-    
-            60
-        )
-    
-        publication_weight = st.slider(
-    
-            "Publicaciones",
-    
-            0,
-    
-            100,
-    
-            20
-        )
-    
-        activity_weight = st.slider(
-    
-            "Actividad reciente",
-    
-            0,
-    
-            100,
-    
-            10
-        )
-    
-        evidence_weight = st.slider(
-    
-            "Evidencia automática",
-    
-            0,
-    
-            100,
-    
-            10
-        )
 
+elif preset == "🎓 Especialista":
+
+    thematic_weight = 80
+    publication_weight = 10
+    activity_weight = 5
+    evidence_weight = 5
+
+elif preset == "⚡ Disponibilidad":
+
+    thematic_weight = 40
+    publication_weight = 20
+    activity_weight = 25
+    evidence_weight = 15
+
+elif preset == "📚 Trayectoria académica":
+
+    thematic_weight = 50
+    publication_weight = 35
+    activity_weight = 5
+    evidence_weight = 10
+
+else:
 
     st.markdown(
-    "### 📊 Criterios"
+        "### 📊 Criterios"
     )
-    
+
     thematic_weight = st.slider(
-    
+
         "Afinidad temática",
-    
+
         0,
-    
+
         100,
-    
+
         60
     )
-    
+
     publication_weight = st.slider(
-    
+
         "Publicaciones",
-    
+
         0,
-    
+
         100,
-    
+
         20
     )
-    
+
     activity_weight = st.slider(
-    
+
         "Actividad reciente",
-    
+
         0,
-    
+
         100,
-    
+
         10
     )
-    
+
     evidence_weight = st.slider(
-    
+
         "Evidencia automática",
-    
+
         0,
-    
+
         100,
-    
+
         10
     )
     

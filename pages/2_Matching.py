@@ -370,7 +370,8 @@ if full_query.strip():
             )
 
         scores.append({
-
+            "ID":
+                row["id"],
             "Nombre":
                 row["full_name"],
 
@@ -467,8 +468,52 @@ if full_query.strip():
 
 {row['Estado']}
 """
-                    )
+                    )    
+                    new_status = st.selectbox(
 
+                            "Actualizar estado",
+                        
+                            [
+                        
+                                "Sin cambios",
+                        
+                                "🟢 Activo",
+                        
+                                "🟡 Revisión editorial",
+                        
+                                "🔴 No disponible"
+                        
+                            ],
+                        
+                            key=f"status_{row['ID']}"
+                        )
+                    if st.button(
+
+                            "Guardar",
+                        
+                            key=f"save_{row['ID']}"
+                        ):
+                        
+                            if new_status != "Sin cambios":
+                        
+                                set_reviewer_status(
+                        
+                                    reviewer_id=row["ID"],
+                        
+                                    is_active=(
+                                        new_status == "🟢 Activo"
+                                    ),
+                        
+                                    source="Editorial",
+                        
+                                    notes=f"Actualizado desde Matching: {new_status}"
+                                )
+                        
+                                st.success(
+                                    "Estado actualizado."
+                                )
+                        
+                                st.rerun()
                     st.code(
                         row["Correo"]
                     )

@@ -340,12 +340,8 @@ if full_query.strip():
             
                 thematic_weight,
             
-                publication_weight,
-            
-                activity_weight,
-            
-                evidence_weight
-        )
+                publication_weight
+            )
         status, source = get_reviewer_status(
             row["id"]
         )
@@ -386,7 +382,7 @@ if full_query.strip():
             
         })
 
-        # =========================
+    # =========================
     # RESULTADOS
     # =========================
 
@@ -397,37 +393,29 @@ if full_query.strip():
     if results_df.empty:
 
         st.warning(
-            "No se encontraron evaluadores que cumplan los criterios seleccionados."
+            "No se encontraron evaluadores con los criterios seleccionados."
         )
 
     else:
 
-            results_df = results_df.sort_values(
+        results_df = results_df.sort_values(
 
-        by="Score",
+            by="Score",
 
-        ascending=False
-    )
+            ascending=False
+        )
 
-    results_df = results_df.head(30)
+        results_df = results_df.head(30)
 
-    st.subheader(
-        "🏆 Mejores coincidencias"
-    )
-
-        # =========================
-        # CARDS
-        # =========================
+        st.subheader(
+            "🏆 Mejores coincidencias"
+        )
 
         for idx, row in results_df.iterrows():
 
             with st.container():
 
                 top, bottom = st.columns([5, 1])
-
-                # =========================
-                # IZQUIERDA
-                # =========================
 
                 with top:
 
@@ -444,13 +432,10 @@ if full_query.strip():
 """
                     )
 
-                    # =========================
-                    # CORREO
-                    # =========================
+                    st.code(
+                        row["Correo"]
+                    )
 
-                                   st.code(
-                    row["Correo"]
-                )
                     badge1, badge2, badge3 = st.columns(3)
 
                     with badge1:
@@ -485,10 +470,6 @@ if full_query.strip():
                                 "Afinidad baja"
                             )
 
-                # =========================
-                # DERECHA
-                # =========================
-
                 with bottom:
 
                     st.metric(
@@ -496,20 +477,12 @@ if full_query.strip():
                         f"{row['Score']}"
                     )
 
-                # =========================
-                # BARRA SCORE
-                # =========================
-
                 st.progress(
                     min(
                         row["Score"] / 100,
                         1.0
                     )
                 )
-
-                # =========================
-                # TEMA
-                # =========================
 
                 with st.expander(
                     "🔬 Ver tema de investigación"
@@ -519,7 +492,7 @@ if full_query.strip():
                         row["Tema"]
                     )
 
-                st.divider()
+                st.divider
 
 else:
 

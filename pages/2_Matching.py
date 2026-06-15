@@ -125,6 +125,12 @@ with right:
         .dropna()
         .unique()
     )
+    only_active = st.checkbox(
+
+    "Solo evaluadores activos",
+
+    value=True
+    )
 
     selected_country = st.selectbox(
 
@@ -180,7 +186,26 @@ with right:
 
         30
     )
+    activity_weight = st.slider(
 
+    "Actividad reciente",
+
+    0,
+
+    100,
+
+    15
+    )
+    evidence_weight = st.slider(
+
+    "Evidencia automática",
+
+    0,
+
+    100,
+
+    10
+    )
     st.divider()
 
     st.info(
@@ -232,6 +257,30 @@ if selected_degree != "Todos":
         ]
         ==
         selected_degree
+    ]
+if only_active:
+
+    active_ids = []
+
+    for _, reviewer in filtered_df.iterrows():
+
+        status, _ = get_reviewer_status(
+
+            reviewer["id"]
+        )
+
+        if status == "🟢 Activo":
+
+            active_ids.append(
+
+                reviewer["id"]
+            )
+
+    filtered_df = filtered_df[
+
+        filtered_df["id"].isin(
+            active_ids
+        )
     ]
 
 # =========================
@@ -285,15 +334,21 @@ if full_query.strip():
 
         final_score = calculate_match_score(
 
-            row,
-
-            full_query,
-
-            thematic_weight,
-
-            publication_weight
+                row,
+            
+                full_query,
+            
+                thematic_weight,
+            
+                publication_weight,
+            
+                activity_weight,
+            
+                evidence_weight
         )
-
+        status, source = get_reviewer_status(
+            row["id"]
+        )
         scores.append({
 
             "Nombre":
@@ -322,7 +377,13 @@ if full_query.strip():
                 round(final_score, 1),
 
             "Tema":
-                topic[:300]
+                topic[:300],
+            "Estado":
+                status,
+        
+            "Fuente":
+                source
+            
         })
 
     # =========================
@@ -367,22 +428,20 @@ if full_query.strip():
                 )
     
                 st.caption(
-                    f"🏛 {row['Institución']} • 🌎 {row['País']}"
+
+                    f"""
+                    🏛 {row['Institución']} • 🌎 {row['País']}
+                    
+                    {row['Estado']}
+                    """
                 )
     
                 # =========================
                 # CORREO
                 # =========================
     
-                st.text_input(
-    
-                    "📧 Correo de contacto",
-    
-                    value=row["Correo"],
-    
-                   
-    
-                    key=f"email_{idx}"
+               st.code(
+                    row["Correo"]
                 )
     
                 badge1, badge2, badge3 = st.columns(3)

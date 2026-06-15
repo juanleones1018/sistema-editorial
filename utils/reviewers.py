@@ -5,7 +5,41 @@ from utils.db import supabase
 # =========================
 # CARGAR REVIEWERS
 # =========================
+def load_reviewer_statuses():
 
+    response = supabase.table(
+        "reviewer_activity"
+    ).select(
+        "*"
+    ).order(
+        "created_at",
+        desc=True
+    ).execute()
+
+    data = response.data
+
+    if not data:
+
+        return {}
+
+    statuses = {}
+
+    for item in data:
+
+        reviewer_id = item["reviewer_id"]
+
+        if reviewer_id not in statuses:
+
+            statuses[reviewer_id] = (
+
+                "🟢 Activo"
+                if item["is_active"]
+                else "🔴 Revisar",
+
+                item["source"]
+            )
+
+    return statuses
 def load_reviewers():
 
     all_data = []

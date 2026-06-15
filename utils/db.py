@@ -1,5 +1,14 @@
 import streamlit as st
 
+
+print("Cargando db.py...")
+print("Secrets disponibles:")
+
+try:
+    print(st.secrets.keys())
+except Exception as e:
+    print(e)
+    raise
 from supabase import (
     create_client
 )

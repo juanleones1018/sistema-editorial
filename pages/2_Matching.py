@@ -1,6 +1,10 @@
 import streamlit as st
 import pandas as pd
+from utils.auth import (
+    login
+)
 
+if not login():
 from utils.matching import (
     calculate_match_score
 )

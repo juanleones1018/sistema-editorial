@@ -10,11 +10,10 @@ from utils.matching import (
     calculate_match_score
 )
 from utils.reviewers import (
-    
-    load_reviewers
-)
-from utils.reviewers import (
-    get_reviewer_status
+
+    load_reviewers,
+
+    load_reviewer_statuses
 )
 from utils.layout import (
 

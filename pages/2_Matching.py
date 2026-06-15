@@ -387,7 +387,16 @@ if full_query.strip():
                 row[
                     "academic_degree_level"
                 ],
-
+            "Grado completo":
+                row.get(
+                    "academic_degree",
+                    ""
+                ),
+            "Publicaciones":
+                row.get(
+                    "publications",
+                    ""
+                ),
             "Última publicación":
                 last_year,
 

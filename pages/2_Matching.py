@@ -13,7 +13,8 @@ from utils.reviewers import (
 
     load_reviewers,
 
-    load_reviewer_statuses
+    load_reviewer_statuses,
+    set_reviewer_status
 )
 from utils.layout import (
 

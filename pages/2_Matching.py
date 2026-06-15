@@ -466,7 +466,7 @@ if full_query.strip():
                     with badge1:
 
                         st.success(
-                            row["Nivel"]
+                            f"🎓 {row['Nivel']}"
                         )
 
                     with badge2:
@@ -522,7 +522,26 @@ if full_query.strip():
                     st.write(
                         row["Tema"]
                     )
-
+                with st.expander(
+                    "🎓 Ver formación académica"
+                 ):
+                    
+                    st.markdown(
+                            f"""
+                            **Nivel:** {row['academic_degree_level']}
+                            
+                            **Título:** {row.get('academic_degree', 'No disponible')}
+                            """
+                    )
+                     with st.expander(
+                        "📚 Ver publicaciones"
+                    ):
+                        st.write(
+                            row.get(
+                                "publications",
+                                "No disponible"
+                            )
+                        )
                 st.divider()
 
 else:

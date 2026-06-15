@@ -533,15 +533,15 @@ if full_query.strip():
                             **Título:** {row.get('academic_degree', 'No disponible')}
                             """
                     )
-                     with st.expander(
+                with st.expander(
                         "📚 Ver publicaciones"
-                    ):
+                 ):
                         st.write(
                             row.get(
                                 "publications",
                                 "No disponible"
                             )
-                        )
+                    )
                 st.divider()
 
 else:

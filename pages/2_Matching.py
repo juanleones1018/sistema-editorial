@@ -287,8 +287,7 @@ total_weight = (
     
         evidence_weight
     )
-
-    if total_weight != 100:
+if total_weight != 100:
     
         st.error(
     

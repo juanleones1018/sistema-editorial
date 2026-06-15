@@ -298,7 +298,7 @@ if total_weight != 100:
     """
         )
     
-    else:
+else:
     
         st.success(
             "✅ Configuración válida"

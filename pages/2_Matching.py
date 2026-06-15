@@ -478,7 +478,7 @@ if full_query.strip():
                     with badge1:
 
                         st.success(
-                            f"🎓 {row['Nivel']}"
+                            f"🎓 {row['Grado']}"
                         )
 
                     with badge2:

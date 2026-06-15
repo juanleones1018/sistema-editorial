@@ -12,7 +12,7 @@ def load_reviewer_statuses():
     ).select(
         "*"
     ).order(
-        "created_at",
+        "checked_at",
         desc=True
     ).execute()
 
@@ -28,6 +28,7 @@ def load_reviewer_statuses():
 
         reviewer_id = item["reviewer_id"]
 
+        # Nos quedamos solo con el registro más reciente
         if reviewer_id not in statuses:
 
             statuses[reviewer_id] = (

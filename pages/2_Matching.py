@@ -1,16 +1,15 @@
 import streamlit as st
 import pandas as pd
-from utils.auth import (
-    login
+
+from utils.matching import (
+    calculate_match_score
 )
-
-if not login():
-
-    st.stop()
-from rapidfuzz import fuzz
-
 from utils.reviewers import (
+    
     load_reviewers
+)
+from utils.reviewers import (
+    get_reviewer_status
 )
 from utils.layout import (
 
@@ -284,97 +283,44 @@ if full_query.strip():
             )
         )
 
-        # =========================
-        # SCORE TEMÁTICO
-        # =========================
+        final_score = calculate_match_score(
 
-        topic_score = fuzz.token_set_ratio(
+            row,
 
             full_query,
 
-            topic
+            thematic_weight,
+
+            publication_weight
         )
-
-        # =========================
-        # SCORE PUBLICACIONES
-        # =========================
-
-        publication_score = (
-            fuzz.token_set_ratio(
-
-                full_query,
-
-                publications
-            )
-        )
-
-        # =========================
-        # SCORE FINAL
-        # =========================
-
-        final_score = (
-
-            (
-                topic_score
-                *
-                thematic_weight
-            )
-
-            +
-
-            (
-                publication_score
-                *
-                publication_weight
-            )
-
-        ) / 100
-
-        # =========================
-        # BONUS PUBLICACIÓN RECIENTE
-        # =========================
-
-        try:
-
-            last_year = int(
-
-                row.get(
-                    "last_publication_year",
-                    0
-                )
-            )
-
-            if last_year >= 2022:
-
-                final_score += 5
-
-        except:
-
-            pass
 
         scores.append({
 
             "Nombre":
                 row["full_name"],
-        
+
             "Correo":
                 row["email"],
-        
+
             "Institución":
                 row["institution"],
-        
+
             "País":
                 row["country"],
-        
+
             "Nivel":
-                row["academic_degree_level"],
-        
+                row[
+                    "academic_degree_level"
+                ],
+
             "Última publicación":
-                row["last_publication_year"],
-        
+                row[
+                    "last_publication_year"
+                ],
+
             "Score":
                 round(final_score, 1),
-        
+
             "Tema":
                 topic[:300]
         })
@@ -400,7 +346,7 @@ if full_query.strip():
         "🏆 Mejores coincidencias"
     )
 
-   # =========================
+# =========================
 # CARDS
 # =========================
 
@@ -472,7 +418,7 @@ if full_query.strip():
                         st.error(
                             "Afinidad baja"
                         )
-    
+
             # =========================
             # DERECHA
             # =========================

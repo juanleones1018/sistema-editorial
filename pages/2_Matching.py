@@ -383,19 +383,22 @@ if full_query.strip():
             "País":
                 row["country"],
 
-            "Nivel":
-                row[
-                    "academic_degree_level"
-                ],
-            "Grado completo":
+            "Grado":
+                row.get(
+                    "academic_degree_level",
+                    "No disponible"
+                ),
+            
+            "Formación":
                 row.get(
                     "academic_degree",
-                    ""
+                    "No disponible"
                 ),
+            
             "Publicaciones":
                 row.get(
                     "publications",
-                    ""
+                    "No disponible"
                 ),
             "Última publicación":
                 last_year,
@@ -537,19 +540,16 @@ if full_query.strip():
                     
                     st.markdown(
                             f"""
-                            **Nivel:** {row['academic_degree_level']}
+                            **Nivel:** {row['Grado']}
                             
-                            **Título:** {row.get('academic_degree', 'No disponible')}
+                            **Título:** {row['Formación']}
                             """
                     )
                 with st.expander(
                         "📚 Ver publicaciones"
                  ):
                         st.write(
-                            row.get(
-                                "publications",
-                                "No disponible"
-                            )
+                           row["Publicaciones"]
                     )
                 st.divider()
 

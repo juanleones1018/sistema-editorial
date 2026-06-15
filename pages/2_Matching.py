@@ -317,6 +317,7 @@ full_query = (
 # =========================
 # MATCHING
 # =========================
+
 if full_query.strip():
 
     scores = []
@@ -330,26 +331,44 @@ if full_query.strip():
             )
         )
 
-        publications = str(
-            row.get(
-                "publications",
-                ""
-            )
-        )
-
         final_score = calculate_match_score(
 
-                row,
-            
-                full_query,
-            
-                thematic_weight,
-            
-                publication_weight
-            )
+            row,
+
+            full_query,
+
+            thematic_weight,
+
+            publication_weight
+        )
+
         status, source = get_reviewer_status(
+
             row["id"]
         )
+
+        # =========================
+        # NORMALIZAR ÚLTIMA PUBLICACIÓN
+        # =========================
+
+        last_year = row.get(
+
+            "last_publication_year",
+
+            None
+        )
+
+        if pd.isna(last_year) or last_year == "":
+
+            last_year = "N/D"
+
+        else:
+
+            last_year = str(
+
+                int(last_year)
+            )
+
         scores.append({
 
             "Nombre":
@@ -370,21 +389,22 @@ if full_query.strip():
                 ],
 
             "Última publicación":
-                row[
-                    "last_publication_year"
-                ],
+                last_year,
 
             "Score":
-                round(final_score, 1),
+                round(
+                    final_score,
+                    1
+                ),
 
             "Tema":
                 topic[:300],
+
             "Estado":
                 status,
-        
+
             "Fuente":
                 source
-            
         })
 
     # =========================
@@ -395,7 +415,7 @@ if full_query.strip():
         scores
     )
 
-    if results_df.empty:
+    if results_df.empty():
 
         st.warning(
             "No se encontraron evaluadores con los criterios seleccionados."
@@ -478,18 +498,24 @@ if full_query.strip():
                 with bottom:
 
                     st.metric(
+
                         "Score",
+
                         f"{row['Score']}"
                     )
 
                 st.progress(
+
                     min(
+
                         row["Score"] / 100,
+
                         1.0
                     )
                 )
 
                 with st.expander(
+
                     "🔬 Ver tema de investigación"
                 ):
 
@@ -497,7 +523,7 @@ if full_query.strip():
                         row["Tema"]
                     )
 
-                st.divider
+                st.divider()
 
 else:
 

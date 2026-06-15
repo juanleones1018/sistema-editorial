@@ -269,3 +269,23 @@ def insert_reviewer(data):
     )
 
     return response
+def set_reviewer_status(
+    reviewer_id,
+    is_active,
+    source,
+    notes
+):
+
+    return supabase.table(
+        "reviewer_activity"
+    ).insert({
+
+        "reviewer_id": reviewer_id,
+
+        "is_active": is_active,
+
+        "source": source,
+
+        "notes": notes
+
+    }).execute()

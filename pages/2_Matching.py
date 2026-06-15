@@ -415,7 +415,7 @@ if full_query.strip():
         scores
     )
 
-    if results_df.empty():
+    if results_df.empty:
 
         st.warning(
             "No se encontraron evaluadores con los criterios seleccionados."

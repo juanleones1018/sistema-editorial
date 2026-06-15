@@ -316,7 +316,7 @@ st.info(
     • Evidencia automática: {evidence_weight}%
     """
     )
-    st.divider()
+st.divider()
 
 st.info(
         f"""

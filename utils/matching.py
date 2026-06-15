@@ -22,10 +22,6 @@ def calculate_match_score(
         )
     )
 
-    # ======================
-    # SCORE TEMÁTICO
-    # ======================
-
     topic_score = fuzz.token_set_ratio(
 
         full_query,
@@ -33,20 +29,12 @@ def calculate_match_score(
         topic
     )
 
-    # ======================
-    # SCORE PUBLICACIONES
-    # ======================
-
     publication_score = fuzz.token_set_ratio(
 
         full_query,
 
         publications
     )
-
-    # ======================
-    # SCORE FINAL
-    # ======================
 
     final_score = (
 
@@ -65,28 +53,6 @@ def calculate_match_score(
         )
 
     ) / 100
-
-    # ======================
-    # BONUS ACTUALIDAD
-    # ======================
-
-    try:
-
-        last_year = int(
-
-            row.get(
-                "last_publication_year",
-                0
-            )
-        )
-
-        if last_year >= 2022:
-
-            final_score += 5
-
-    except:
-
-        pass
 
     return round(
         final_score,

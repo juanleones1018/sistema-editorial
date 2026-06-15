@@ -311,7 +311,6 @@ full_query = (
 # =========================
 # MATCHING
 # =========================
-
 if full_query.strip():
 
     scores = []
@@ -389,23 +388,22 @@ if full_query.strip():
     # =========================
     # RESULTADOS
     # =========================
-
-    results_df = pd.DataFrame(
-        scores
-    )
-
-    results_df = results_df.sort_values(
-
-        by="Score",
-
-        ascending=False
-    )
-
-    results_df = results_df.head(30)
-
-    st.subheader(
-        "🏆 Mejores coincidencias"
-    )
+     results_df = pd.DataFrame(
+            scores
+        )
+    
+        results_df = results_df.sort_values(
+    
+            by="Score",
+    
+            ascending=False
+        )
+    
+        results_df = results_df.head(30)
+    
+        st.subheader(
+            "🏆 Mejores coincidencias"
+        )
 
 # =========================
 # CARDS

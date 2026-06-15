@@ -125,12 +125,12 @@ with right:
         .dropna()
         .unique()
     )
-        only_active = st.checkbox(
+    only_active = st.checkbox(
     
             "Solo evaluadores activos",
         
             value=True
-        )
+    )
 
     selected_country = st.selectbox(
 

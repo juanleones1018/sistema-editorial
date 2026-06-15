@@ -1,11 +1,6 @@
 import pandas as pd
 
-try:
-    from utils.db import supabase
-except Exception as e:
-    raise Exception(
-        f"Error importando utils.db: {repr(e)}"
-    )
+from utils.db import supabase
 
 # =========================
 # CARGAR REVIEWERS

@@ -386,7 +386,7 @@ if full_query.strip():
             
         })
 
-    # =========================
+        # =========================
     # RESULTADOS
     # =========================
 
@@ -402,18 +402,18 @@ if full_query.strip():
 
     else:
 
-        results_df = results_df.sort_values(
+            results_df = results_df.sort_values(
 
-            by="Score",
+        by="Score",
 
-            ascending=False
-        )
+        ascending=False
+    )
 
-        results_df = results_df.head(30)
+    results_df = results_df.head(30)
 
-        st.subheader(
-            "🏆 Mejores coincidencias"
-        )
+    st.subheader(
+        "🏆 Mejores coincidencias"
+    )
 
         # =========================
         # CARDS
@@ -448,10 +448,9 @@ if full_query.strip():
                     # CORREO
                     # =========================
 
-                    st.code(
-                        row["Correo"]
-                    )
-
+                                   st.code(
+                    row["Correo"]
+                )
                     badge1, badge2, badge3 = st.columns(3)
 
                     with badge1:

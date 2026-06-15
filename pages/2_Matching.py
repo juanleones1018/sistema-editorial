@@ -318,7 +318,7 @@ else:
     )
     st.divider()
 
-    st.info(
+st.info(
         f"""
 🔎 Evaluadores cargados:
 {len(df)}

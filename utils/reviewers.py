@@ -34,6 +34,101 @@ def load_reviewers():
         start += page_size
 
     return pd.DataFrame(all_data)
+def load_activity(
+    reviewer_id
+):
+
+    response = (
+
+        supabase
+
+        .table(
+            "reviewer_activity"
+        )
+
+        .select("*")
+
+        .eq(
+            "reviewer_id",
+            reviewer_id
+        )
+
+        .order(
+            "checked_at",
+            desc=True
+        )
+
+        .execute()
+    )
+
+    return pd.DataFrame(
+        response.data
+    )
+
+
+def update_reviewer_activity(
+    reviewer_id,
+    is_active,
+    source,
+    notes,
+    checked_by="BOT"
+):
+
+    data = {
+
+        "reviewer_id": reviewer_id,
+
+        "is_active": is_active,
+
+        "source": source,
+
+        "notes": notes,
+
+        "checked_by": checked_by
+    }
+
+    return insert_activity(
+        data
+    )
+
+
+def get_reviewer_status(
+    reviewer_id
+):
+
+    try:
+
+        activity = load_activity(
+            reviewer_id
+        )
+
+        if activity.empty:
+
+            return (
+                "🟡 Sin verificar",
+                None
+            )
+
+        latest = activity.iloc[0]
+
+        if latest["is_active"]:
+
+            return (
+                "🟢 Activo",
+                latest["source"]
+            )
+
+        return (
+            "🔴 Revisar",
+            latest["source"]
+        )
+
+    except:
+
+        return (
+            "🟡 Sin verificar",
+            None
+        )
 # =========================
 # ACTUALIZAR REVIEWER
 # =========================
@@ -110,7 +205,20 @@ def insert_activity(
 
     return response
 from utils.db import supabase
+def insert_activity(data):
 
+    return (
+
+        supabase
+
+        .table(
+            "reviewer_activity"
+        )
+
+        .insert(data)
+
+        .execute()
+    )
 
 def insert_reviewer(data):
 

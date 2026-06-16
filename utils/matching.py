@@ -1,3 +1,5 @@
+import re
+
 from rapidfuzz import fuzz
 
 
@@ -58,3 +60,61 @@ def calculate_match_score(
         final_score,
         1
     )
+def calculate_specialization_bonus(
+
+    full_query,
+
+    research_topic,
+
+    publications
+):
+
+    query = full_query.lower()
+
+    corpus = (
+
+        str(research_topic)
+
+        +
+
+        " "
+
+        +
+
+        str(publications)
+
+    ).lower()
+
+    keywords = [
+
+        word.strip()
+
+        for word in re.findall(
+
+            r"\b[a-záéíóúñ]{5,}\b",
+
+            query
+        )
+    ]
+
+    keywords = list(
+
+        set(keywords)
+    )
+
+    matches = 0
+
+    for keyword in keywords:
+
+        if keyword in corpus:
+
+            matches += 1
+
+    bonus = min(
+
+        matches * 3,
+
+        15
+    )
+
+    return bonus

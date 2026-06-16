@@ -409,12 +409,7 @@ full_query = (
     
 )
 
-specialization_query = (
-
-    f"{title},"
-
-    f"{keywords}"
-)
+specialization_query = keywords
 # =========================
 # MATCHING
 # =========================

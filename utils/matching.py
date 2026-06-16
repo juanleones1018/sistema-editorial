@@ -18,6 +18,24 @@ def calculate_specialization_score(
 
         return 0
 
+    STOPWORDS = {
+
+        "historia",
+        "colombia",
+        "américa",
+        "america",
+        "latina",
+        "estado",
+        "guerra",
+        "política",
+        "politica",
+        "sociedad",
+        "social",
+        "cultura",
+        "desarrollo"
+
+    }
+
     # =========================
     # NORMALIZAR KEYWORDS
     # =========================
@@ -29,6 +47,15 @@ def calculate_specialization_score(
         for keyword in keywords.split(",")
 
         if keyword.strip()
+    ]
+
+    query_keywords = [
+
+        keyword
+
+        for keyword in query_keywords
+
+        if keyword not in STOPWORDS
     ]
 
     if not query_keywords:
@@ -58,41 +85,81 @@ def calculate_specialization_score(
     # =========================
 
     matches = 0
+    max_possible = 0
 
     for keyword in query_keywords:
-    
-        keyword = keyword.lower().strip()
-    
+
+        keyword = keyword.strip()
+
         if not keyword:
-    
+
             continue
-    
-        if keyword in corpus:
-    
-            matches += 1
-    
-        else:
-    
-            similarity = fuzz.partial_ratio(
-    
-                keyword,
-    
-                corpus
-            )
-    
-            if similarity >= 90:
-    
-                matches += 1
+
         # =========================
-        # SCORE 0–100
+        # PESO SEGÚN ESPECIFICIDAD
         # =========================
-    
-        specialization_score = min(
-    
-            matches * 30,
-        
-            100
+
+        words = len(
+
+            keyword.split()
         )
+
+        if words >= 4:
+
+            weight = 4
+
+        elif words == 3:
+
+            weight = 3
+
+        elif words == 2:
+
+            weight = 2
+
+        else:
+
+            weight = 1
+
+        max_possible += weight
+
+        # =========================
+        # MATCH EXACTO
+        # =========================
+
+        if keyword in corpus:
+
+            matches += weight
+
+            continue
+
+        # =========================
+        # MATCH DIFUSO
+        # =========================
+
+        similarity = fuzz.partial_ratio(
+
+            keyword,
+
+            corpus
+        )
+
+        if similarity >= 90:
+
+            matches += weight
+
+    # =========================
+    # SCORE 0–100
+    # =========================
+
+    specialization_score = (
+
+        matches
+
+        /
+
+        max_possible
+
+    ) * 100
 
     return round(
 
@@ -241,13 +308,13 @@ def calculate_match_score(
 
         fuzzy_score
 
-        * 0.50
+        * 0.70
 
         +
 
         specialization_score
 
-        * 0.50
+        * 0.30
     )
 
     final_score = min(

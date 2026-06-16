@@ -400,13 +400,8 @@ if only_active:
 full_query = (
 
     f"{title} "
-    
-    f"{keywords}"
-    
 
-    f"{query} "
-
-    
+    f"{query}"
 )
 
 specialization_query = keywords

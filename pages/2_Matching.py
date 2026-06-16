@@ -401,7 +401,9 @@ full_query = (
 
     f"{title} "
 
-    f"{query}"
+    f"{query} "
+
+    f"{keywords}"
 )
 
 specialization_query = keywords

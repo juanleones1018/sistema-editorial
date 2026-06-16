@@ -16,7 +16,7 @@ def calculate_specialization_score(
     academic_profile=""
 ):
 
-   if not keywords:
+    if not keywords:
 
         return 0
 

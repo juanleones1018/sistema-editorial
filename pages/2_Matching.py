@@ -400,12 +400,13 @@ if only_active:
 full_query = (
 
     f"{title} "
-
-    f"{title} "
+    
+    f"{keywords}"
+    
 
     f"{query} "
 
-    f"{keywords}"
+    
 )
 
 specialization_query = (
@@ -436,7 +437,7 @@ if full_query.strip() and total_weight == 100:
             row,
 
             full_query,
-            query_keywords,
+            specialization_query,
 
             thematic_weight,
 

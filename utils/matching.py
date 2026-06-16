@@ -107,13 +107,22 @@ def calculate_match_score(
         topic
     )
 
-    publication_score = fuzz.token_set_ratio(
+    publication_score = max(
 
-        full_query,
+        fuzz.token_set_ratio(
 
-        publications
+            full_query,
+    
+            publications
+        ),
+    
+        fuzz.partial_ratio(
+    
+            specialization_query,
+    
+            publications
+        )
     )
-
     # =========================
     # ESPECIALIZACIÓN
     # =========================

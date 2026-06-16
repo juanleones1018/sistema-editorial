@@ -218,29 +218,15 @@ def get_reviewer_status(reviewer_id):
         )
     )
 
-    checked_by = str(
-        activity.get(
-            "checked_by",
-            ""
-        )
-    )
-
-    if "🟡 Revisión editorial" in notes:
-
-        return (
-
-            "🟡 Verificar",
-
-            activity["source"]
-        )
-
+    # Revisión editorial
     if (
 
-        "Sugerencia editorial" in notes
+        "🟡 Revisión editorial" in notes
 
         or
 
-        checked_by == "BOT"
+        "Sugerencia editorial" in notes
+
     ):
 
         return (
@@ -250,6 +236,17 @@ def get_reviewer_status(reviewer_id):
             activity["source"]
         )
 
+    # Sin verificar
+    if "⚪ Sin verificar" in notes:
+
+        return (
+
+            "⚪ Sin verificar",
+
+            activity["source"]
+        )
+
+    # No disponible
     if "🔴 No disponible" in notes:
 
         return (
@@ -259,10 +256,7 @@ def get_reviewer_status(reviewer_id):
             activity["source"]
         )
 
-    # =========================
-    # CASO POR DEFECTO
-    # =========================
-
+    # Caso por defecto
     return (
 
         "⚪ Sin verificar",

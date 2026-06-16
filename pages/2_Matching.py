@@ -117,7 +117,24 @@ Describe el artículo, tema o enfoque de investigación...
     keywords = st.text_input(
         "Palabras clave separadas por coma"
     )
+    priority_keywords = st.multiselect(
 
+        "🎯 Palabras clave prioritarias",
+    
+        options=[
+    
+            k.strip()
+    
+            for k in keywords.split(",")
+    
+            if k.strip()
+        ],
+    
+        help="""
+    Selecciona las palabras clave más importantes para este artículo.
+    Estas tendrán mayor peso en el matching.
+    """
+    )
 # =========================
 # PANEL DERECHO
 # =========================

@@ -720,4 +720,9 @@ else:
     st.info(
         "Escribe un tema para iniciar matching"
     )
+print(full_query)
+print(keywords)
+print(topic_score)
+print(publication_score)
+print(specialization_score)
    

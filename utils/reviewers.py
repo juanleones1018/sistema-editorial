@@ -3,17 +3,85 @@ import pandas as pd
 from utils.db import supabase
 def load_reviewer_statuses():
 
-    reviewers = load_reviewers()
+    response = (
+
+        supabase
+
+        .table(
+            "reviewer_activity"
+        )
+
+        .select("*")
+
+        .order(
+            "checked_at",
+            desc=True
+        )
+
+        .execute()
+    )
+
+    activities = response.data
 
     status_dict = {}
 
-    for reviewer_id in reviewers["id"]:
+    for activity in activities:
+
+        reviewer_id = activity["reviewer_id"]
+
+        if reviewer_id in status_dict:
+
+            continue
+
+        if activity["is_active"]:
+
+            status = "🟢 Activo"
+
+        else:
+
+            notes = str(
+                activity.get(
+                    "notes",
+                    ""
+                )
+            )
+
+            checked_by = str(
+                activity.get(
+                    "checked_by",
+                    ""
+                )
+            )
+
+            if (
+
+                "🟡 Revisión editorial" in notes
+
+                or
+
+                "Sugerencia editorial" in notes
+
+                or
+
+                checked_by == "BOT"
+
+            ):
+
+                status = "🟡 Verificar"
+
+            elif "🔴 No disponible" in notes:
+
+                status = "🔴 Inactivo"
+
+            else:
+
+                status = "⚪ Sin verificar"
 
         status_dict[reviewer_id] = (
 
-            get_reviewer_status(
-                reviewer_id
-            )
+            status,
+
+            activity["source"]
         )
 
     return status_dict

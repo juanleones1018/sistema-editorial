@@ -9,6 +9,7 @@ if not login():
     st.stop()
 from utils.reviewers import (
     load_reviewers,
+    update_reviewer_activity,
     update_reviewer,
     insert_activity
 )

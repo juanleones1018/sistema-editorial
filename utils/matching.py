@@ -372,8 +372,3 @@ def calculate_match_score(
 
         1
     )
-print(full_query)
-print(keywords)
-print(topic_score)
-print(publication_score)
-print(specialization_score)

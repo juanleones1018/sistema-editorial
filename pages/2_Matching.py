@@ -654,26 +654,27 @@ if full_query.strip() and total_weight == 100:
                     with badge3:
 
                         if row["Score"] >= 70:
-
+                    
                             st.success(
-                                "Alta afinidad"
+                                "⭐ Alta afinidad"
                             )
-
+                    
                         elif row["Score"] >= 50:
-
+                    
                             st.warning(
-                                "Afinidad media"
+                                "🟡 Afinidad media"
                             )
-                        elif score >= 35:
-
+                    
+                        elif row["Score"] >= 35:
+                    
                             st.info(
-                                "Afinidad relevante"
+                                "🔵 Afinidad relevante"
                             )
-
+                    
                         else:
-
+                    
                             st.error(
-                                "Afinidad baja"
+                                "🔴 Afinidad baja"
                             )
 
                 with bottom:

@@ -133,12 +133,7 @@ def calculate_specialization_score(
         max_possible
 
     ) * 100
-    print(
-        row.get("name"),
-        matches,
-        max_possible,
-        specialization_score
-    )
+    
     return round(
 
         specialization_score,

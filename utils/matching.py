@@ -1,6 +1,8 @@
 import re
 
 from rapidfuzz import fuzz
+
+
 # =========================
 # ESPECIALIZACIÓN TEMÁTICA
 # =========================
@@ -29,6 +31,10 @@ def calculate_specialization_score(
         if keyword.strip()
     ]
 
+    if not query_keywords:
+
+        return 0
+
     # =========================
     # CORPUS DEL EVALUADOR
     # =========================
@@ -55,7 +61,14 @@ def calculate_specialization_score(
 
     for keyword in query_keywords:
 
-        if keyword in corpus:
+        similarity = fuzz.partial_ratio(
+
+            keyword,
+
+            corpus
+        )
+
+        if similarity >= 85:
 
             matches += 1
 
@@ -80,6 +93,11 @@ def calculate_specialization_score(
         1
     )
 
+
+# =========================
+# MATCHING GENERAL
+# =========================
+
 def calculate_match_score(
 
     row,
@@ -90,18 +108,28 @@ def calculate_match_score(
 ):
 
     topic = str(
+
         row.get(
+
             "research_topic",
+
             ""
         )
     )
 
     publications = str(
+
         row.get(
+
             "publications",
+
             ""
         )
     )
+
+    # =========================
+    # AFINIDAD TEMÁTICA
+    # =========================
 
     topic_score = fuzz.token_set_ratio(
 
@@ -110,12 +138,20 @@ def calculate_match_score(
         topic
     )
 
+    # =========================
+    # PUBLICACIONES
+    # =========================
+
     publication_score = fuzz.token_set_ratio(
 
         full_query,
 
         publications
     )
+
+    # =========================
+    # ESPECIALIZACIÓN
+    # =========================
 
     specialization_score = (
 
@@ -129,39 +165,81 @@ def calculate_match_score(
         )
     )
 
-    final_score = (
+    # =========================
+    # NORMALIZAR PESOS
+    # =========================
 
-        (
+    total = (
 
-            topic_score
-
-            *
-
-            thematic_weight
-
-        )
+        thematic_weight
 
         +
 
-        (
+        publication_weight
+    )
 
-            publication_score
+    if total == 0:
 
-            *
+        thematic_ratio = 0.5
+
+        publication_ratio = 0.5
+
+    else:
+
+        thematic_ratio = (
+
+            thematic_weight
+
+            /
+
+            total
+        )
+
+        publication_ratio = (
 
             publication_weight
 
+            /
+
+            total
         )
 
-    ) / 100
+    # =========================
+    # SCORE BASE
+    # =========================
 
-    # Bonus editorial
+    fuzzy_score = (
 
-    final_score += (
+        topic_score
+
+        *
+
+        thematic_ratio
+
+        +
+
+        publication_score
+
+        *
+
+        publication_ratio
+    )
+
+    # =========================
+    # SCORE FINAL
+    # =========================
+
+    final_score = (
+
+        fuzzy_score
+
+        * 0.60
+
+        +
 
         specialization_score
 
-        * 0.20
+        * 0.40
     )
 
     final_score = min(

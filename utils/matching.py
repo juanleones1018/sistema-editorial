@@ -63,13 +63,21 @@ def calculate_specialization_score(
 
     GENERAL_TERMS = {
 
-        "historia",
-        "historia de colombia",
-        "ciencia política",
-        "ciencias políticas",
-        "derecho",
-        "economía",
-        "educación"
+    "historia",
+    "historia de colombia",
+    "ciencia política",
+    "ciencias políticas",
+    "derecho",
+    "economía",
+    "educación",
+    "políticas públicas",
+    "america latina",
+    "américa latina",
+    "juventud",
+    "salud",
+    "género",
+    "democracia",
+    "participación"
 
     }
 
@@ -350,13 +358,13 @@ def calculate_match_score(
 
         fuzzy_score
 
-        * 0.40
+        * 0.60
 
         +
 
         specialization_score
 
-        * 0.60
+        * 0.40
     )
 
     final_score = min(

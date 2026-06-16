@@ -103,15 +103,19 @@ def calculate_specialization_score(
 
             matches += weight
 
-    specialization_score = (
+    if max_possible == 0:
 
-        matches
+    return 0
 
-        /
-
-        max_possible
-
-    ) * 100
+        specialization_score = (
+        
+            matches
+        
+            /
+        
+            max_possible
+        
+        ) * 100
 
     return round(
 

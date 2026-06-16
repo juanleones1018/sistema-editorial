@@ -59,22 +59,30 @@ def calculate_specialization_score(
 
     matches = 0
 
-    for keyword in query_keywords:
+for keyword in query_keywords:
 
-       if keyword in corpus:
+    keyword = keyword.lower().strip()
+
+    if not keyword:
+
+        continue
+
+    if keyword in corpus:
+
+        matches += 1
+
+    else:
+
+        similarity = fuzz.partial_ratio(
+
+            keyword,
+
+            corpus
+        )
+
+        if similarity >= 90:
 
             matches += 1
-        
-        elif fuzz.partial_ratio(
-        
-                keyword,
-        
-                corpus
-        
-             ) >= 90:
-        
-            matches += 1
-
     # =========================
     # SCORE 0–100
     # =========================

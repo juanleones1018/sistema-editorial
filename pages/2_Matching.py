@@ -396,6 +396,19 @@ if only_active:
 # QUERY FINAL
 # =========================
 
+matching_query = (
+
+    str(title)
+
+    +
+
+    " "
+
+    +
+
+    str(keywords)
+)
+
 full_query = (
 
     str(title)
@@ -449,7 +462,7 @@ if full_query.strip() and total_weight == 100:
 
             row,
 
-            full_query,
+            matching_query,
             keywords,
 
             thematic_weight,

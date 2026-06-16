@@ -1,7 +1,22 @@
 import pandas as pd
 
 from utils.db import supabase
+def load_reviewer_statuses():
 
+    reviewers = load_reviewers()
+
+    status_dict = {}
+
+    for reviewer_id in reviewers["id"]:
+
+        status_dict[reviewer_id] = (
+
+            get_reviewer_status(
+                reviewer_id
+            )
+        )
+
+    return status_dict
 # =========================
 # CARGAR REVIEWERS
 # =========================

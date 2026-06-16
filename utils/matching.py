@@ -7,47 +7,35 @@ from rapidfuzz import fuzz
 
 def calculate_specialization_score(
 
-    full_query,
-
+    keywords,
     topic,
-
     publications
 ):
 
-    STOPWORDS = {
+    if not keywords:
 
-        "artículo",
-        "investigación",
-        "análisis",
-        "sociales",
-        "desarrollo",
-        "sistema",
-        "proyecto",
-        "colombia",
-        "estado",
-        "guerra",
-        "política"
-    }
+        return 0
 
-    keywords = re.findall(
+    # =========================
+    # NORMALIZAR KEYWORDS
+    # =========================
 
-        r"\b[a-záéíóúñ]{7,}\b",
+    query_keywords = [
 
-        full_query.lower()
-    )
+        keyword.strip().lower()
 
-    keywords = [
+        for keyword in keywords.split(",")
 
-        keyword
-
-        for keyword in set(keywords)
-
-        if keyword not in STOPWORDS
+        if keyword.strip()
     ]
+
+    # =========================
+    # CORPUS DEL EVALUADOR
+    # =========================
 
     corpus = (
 
-        topic
+        str(topic)
 
         +
 
@@ -55,29 +43,48 @@ def calculate_specialization_score(
 
         +
 
-        publications
+        str(publications)
 
     ).lower()
 
+    # =========================
+    # BUSCAR COINCIDENCIAS
+    # =========================
+
     matches = 0
 
-    for keyword in keywords:
+    for keyword in query_keywords:
 
         if keyword in corpus:
 
             matches += 1
 
-    return min(
+    # =========================
+    # SCORE 0–100
+    # =========================
 
-        matches * 10,
+    specialization_score = (
 
-        100
+        matches
+
+        /
+
+        len(query_keywords)
+
+    ) * 100
+
+    return round(
+
+        specialization_score,
+
+        1
     )
 
 def calculate_match_score(
+
     row,
     full_query,
-    specialization_query,
+    keywords,
     thematic_weight,
     publication_weight
 ):
@@ -96,10 +103,6 @@ def calculate_match_score(
         )
     )
 
-    # =========================
-    # AFINIDAD GENERAL
-    # =========================
-
     topic_score = fuzz.token_set_ratio(
 
         full_query,
@@ -107,31 +110,18 @@ def calculate_match_score(
         topic
     )
 
-    publication_score = max(
+    publication_score = fuzz.token_set_ratio(
 
-        fuzz.token_set_ratio(
+        full_query,
 
-            full_query,
-    
-            publications
-        ),
-    
-        fuzz.partial_ratio(
-    
-            specialization_query,
-    
-            publications
-        )
+        publications
     )
-    # =========================
-    # ESPECIALIZACIÓN
-    # =========================
 
     specialization_score = (
 
         calculate_specialization_score(
 
-            specialization_query,
+            keywords,
 
             topic,
 
@@ -139,35 +129,39 @@ def calculate_match_score(
         )
     )
 
-    # =========================
-    # SCORE FINAL
-    # =========================
-
     final_score = (
 
         (
+
             topic_score
+
             *
+
             thematic_weight
+
         )
 
         +
 
         (
+
             publication_score
+
             *
+
             publication_weight
+
         )
 
     ) / 100
 
-    # Bonus máximo de 15 puntos
+    # Bonus editorial
 
     final_score += (
 
         specialization_score
 
-        * 0.15
+        * 0.20
     )
 
     final_score = min(

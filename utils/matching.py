@@ -318,13 +318,13 @@ def calculate_match_score(
 
         fuzzy_score
 
-        * 0.30
+        * 0.70
 
         +
 
         specialization_score
 
-        * 0.70
+        * 0.30
     )
 
     final_score = min(

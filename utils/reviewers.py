@@ -35,7 +35,7 @@ def load_reviewer_statuses():
 
                 "🟢 Activo"
                 if item["is_active"]
-                else "🔴 Revisar",
+                else "🔴 Inactivo",
 
                 item["source"]
             )

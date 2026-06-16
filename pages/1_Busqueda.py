@@ -800,20 +800,24 @@ with st.form(
             "Activo"
         )
 
-        insert_activity(
+        update_reviewer_activity(
 
             reviewer_id=selected["id"],
-
-            is_active=is_active,
-
-            source=validation_source,
-
-            notes=activity_notes
+        
+            is_active=(
+        
+                new_status == "🟢 Activo"
+            ),
+        
+            source="Editorial",
+        
+            notes=f"{new_status}",
+        
+            checked_by="Juan"
         )
-
+        
         st.success(
-            "📌 Validación editorial guardada"
+            "Estado actualizado."
         )
-
+        
         st.rerun()
-

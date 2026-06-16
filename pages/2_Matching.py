@@ -396,50 +396,22 @@ if only_active:
 # QUERY FINAL
 # =========================
 
-matching_query = (
-
-    str(title)
-
-    +
-
-    " "
-
-    +
-
-    str(keywords)
-)
-
 full_query = (
 
-    str(title)
+    f"{title} "
 
-    +
+    f"{title} "
 
-    " "
+    f"{query} "
 
-    +
-
-    str(query)
-
-    +
-
-    " "
-
-    +
-
-    str(keywords)
+    f"{keywords}"
 )
+
 specialization_query = (
 
-    str(title)
+    f"{title},"
 
-    +
-
-    " "
-
-    +
-
-    str(keywords)
+    f"{keywords}"
 )
 # =========================
 # MATCHING
@@ -462,8 +434,8 @@ if full_query.strip() and total_weight == 100:
 
             row,
 
-            matching_query,
-            keywords,
+            full_query,
+            specialization_query,
 
             thematic_weight,
 

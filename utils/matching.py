@@ -11,7 +11,8 @@ def calculate_specialization_score(
 
     keywords,
     topic,
-    publications
+    publications,
+    academic_profile=""
 ):
 
     if not keywords:
@@ -43,6 +44,14 @@ def calculate_specialization_score(
 
         str(publications)
 
+        +
+
+        " "
+
+        +
+
+        str(academic_profile)
+
     ).lower().strip()
 
     if not corpus:
@@ -52,7 +61,25 @@ def calculate_specialization_score(
     matches = 0
     max_possible = 0
 
+    GENERAL_TERMS = {
+
+        "historia",
+        "historia de colombia",
+        "ciencia política",
+        "ciencias políticas",
+        "derecho",
+        "economía",
+        "educación"
+
+    }
+
     for keyword in query_keywords:
+
+        keyword = keyword.strip().lower()
+
+        if not keyword:
+
+            continue
 
         words = len(
 
@@ -83,34 +110,7 @@ def calculate_specialization_score(
         # PENALIZAR TÉRMINOS GENERALES
         # =========================
 
-        if (
-
-            words >= 2
-
-            and
-
-            fuzz.partial_ratio(
-
-                keyword,
-
-                corpus
-
-            ) >= 95
-
-            and
-
-            keyword in {
-
-                "historia de colombia",
-                "ciencia política",
-                "ciencias políticas",
-                "derecho",
-                "economía",
-                "educación",
-                "historia"
-            }
-
-        ):
+        if keyword in GENERAL_TERMS:
 
             weight *= 0.5
 
@@ -196,47 +196,73 @@ def calculate_match_score(
 
     ).strip()
 
+    academic_profile = str(
+
+        row.get(
+
+            "academic_profile",
+
+            ""
+
+        )
+
+    ).strip()
+
     # =========================
     # EVITAR PERFILES VACÍOS
     # =========================
 
-    if not topic and not publications:
+    if (
+
+        not topic
+
+        and
+
+        not publications
+
+        and
+
+        not academic_profile
+
+    ):
 
         return 0
+
+    corpus = (
+
+        topic
+
+        + " "
+
+        + publications
+
+        + " "
+
+        + academic_profile
+
+    )
 
     # =========================
     # AFINIDAD TEMÁTICA
     # =========================
 
-    if topic:
+    topic_score = fuzz.token_set_ratio(
 
-        topic_score = fuzz.token_set_ratio(
+        full_query,
 
-            full_query,
-
-            topic
-        )
-
-    else:
-
-        topic_score = 0
+        corpus
+    )
 
     # =========================
     # PUBLICACIONES
     # =========================
 
-    if publications:
+    publication_score = fuzz.token_set_ratio(
 
-        publication_score = fuzz.token_set_ratio(
+        full_query,
 
-            full_query,
-
-            publications
-        )
-
-    else:
-
-        publication_score = 0
+        publications
+    ) if publications else 0
 
     # =========================
     # ESPECIALIZACIÓN
@@ -250,7 +276,9 @@ def calculate_match_score(
 
             topic,
 
-            publications
+            publications,
+
+            academic_profile
         )
     )
 

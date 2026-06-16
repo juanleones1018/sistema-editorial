@@ -12,7 +12,8 @@ def calculate_specialization_score(
     keywords,
     priority_keywords,
     topic,
-    publications
+    publications,
+    academic_profile=""
 ):
 
     if not keywords:

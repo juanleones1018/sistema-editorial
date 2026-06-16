@@ -659,24 +659,25 @@ with st.form(
 
     with editorial_col1:
 
-        activity_status = st.selectbox(
+       activity_status = st.selectbox(
 
-            "Estado",
-
+            "Estado editorial",
+        
             [
-
-                "Activo",
-
-                "Inactivo",
-
-                "Fallecido",
-
-                "Pendiente"
+        
+                "🟢 Activo",
+        
+                "🟡 Verificar",
+        
+                "⚪ Sin verificar",
+        
+                "🔴 No disponible"
+        
             ],
-
+        
             key=f"activity_{selected['id']}"
         )
-
+                  
     with editorial_col2:
 
         validation_source = st.selectbox(
@@ -796,29 +797,24 @@ with st.form(
     if save_activity:
 
         is_active = (
-            activity_status
-            ==
-            "Activo"
+            activity_status == "🟢 Activo"
         )
-
+    
         update_reviewer_activity(
-
+    
             reviewer_id=selected["id"],
-        
-            is_active=(
-        
-                new_status == "🟢 Activo"
-            ),
-        
-            source="Editorial",
-        
-            notes=f"{new_status}",
-        
+    
+            is_active=is_active,
+    
+            source=validation_source,
+    
+            notes=activity_status,
+    
             checked_by="Juan"
         )
-        
+    
         st.success(
             "Estado actualizado."
         )
-        
+    
         st.rerun()

@@ -154,14 +154,14 @@ def get_reviewer_status(
             )
 
         return (
-            "🔴 Revisar",
+            "🔴 Inactivo",
             latest["source"]
         )
 
     except:
 
         return (
-            "🟡 Sin verificar",
+            "🟡 Verificar",
             None
         )
 # =========================

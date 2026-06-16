@@ -450,7 +450,7 @@ if full_query.strip() and total_weight == 100:
             row,
 
             full_query,
-            specialization_query,
+            keywords,
 
             thematic_weight,
 

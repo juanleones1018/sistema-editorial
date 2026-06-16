@@ -77,6 +77,7 @@ def calculate_specialization_score(
 def calculate_match_score(
     row,
     full_query,
+    specialization_query,
     thematic_weight,
     publication_weight
 ):
@@ -121,7 +122,7 @@ def calculate_match_score(
 
         calculate_specialization_score(
 
-            full_query,
+            specialization_query,
 
             topic,
 

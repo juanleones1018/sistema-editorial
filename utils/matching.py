@@ -24,6 +24,10 @@ def calculate_match_score(
         )
     )
 
+    # =========================
+    # MATCH TEMÁTICO GENERAL
+    # =========================
+
     topic_score = fuzz.token_set_ratio(
 
         full_query,
@@ -56,24 +60,44 @@ def calculate_match_score(
 
     ) / 100
 
-    return round(
-        final_score,
-        1
+    # =========================
+    # BONUS DE ESPECIALIZACIÓN
+    # =========================
+
+    STOPWORDS = {
+
+        "artículo",
+        "investigación",
+        "análisis",
+        "sociales",
+        "política",
+        "proyecto",
+        "desarrollo",
+        "sistema",
+        "colombia",
+        "estudio",
+        "trabajo"
+    }
+
+    keywords = re.findall(
+
+        r"\b[a-záéíóúñ]{5,}\b",
+
+        full_query.lower()
     )
-def calculate_specialization_bonus(
 
-    full_query,
+    keywords = [
 
-    research_topic,
+        keyword
 
-    publications
-):
+        for keyword in set(keywords)
 
-    query = full_query.lower()
+        if keyword not in STOPWORDS
+    ]
 
     corpus = (
 
-        str(research_topic)
+        topic
 
         +
 
@@ -81,26 +105,9 @@ def calculate_specialization_bonus(
 
         +
 
-        str(publications)
+        publications
 
     ).lower()
-
-    keywords = [
-
-        word.strip()
-
-        for word in re.findall(
-
-            r"\b[a-záéíóúñ]{5,}\b",
-
-            query
-        )
-    ]
-
-    keywords = list(
-
-        set(keywords)
-    )
 
     matches = 0
 
@@ -110,11 +117,23 @@ def calculate_specialization_bonus(
 
             matches += 1
 
-    bonus = min(
+    specialization_bonus = min(
 
         matches * 3,
 
         15
     )
 
-    return bonus
+    final_score += specialization_bonus
+
+    final_score = min(
+
+        final_score,
+
+        100
+    )
+
+    return round(
+        final_score,
+        1
+    )

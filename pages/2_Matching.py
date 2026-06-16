@@ -398,19 +398,22 @@ if only_active:
 # =========================
 
 full_query = (
+
     f"{title} "
+
+    f"{title} "
+
     f"{query} "
+
     f"{keywords}"
 )
 
-query_keywords = [
+specialization_query = (
 
-    keyword.strip().lower()
+    f"{title},"
 
-    for keyword in keywords.split(",")
-
-    if keyword.strip().lower() not in GENERIC_KEYWORDS
-]
+    f"{keywords}"
+)
 # =========================
 # MATCHING
 # =========================

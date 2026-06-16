@@ -10,6 +10,7 @@ from rapidfuzz import fuzz
 def calculate_specialization_score(
 
     keywords,
+    priority_keywords,
     topic,
     publications,
     academic_profile=""
@@ -61,25 +62,7 @@ def calculate_specialization_score(
     matches = 0
     max_possible = 0
 
-    GENERAL_TERMS = {
-
-    "historia",
-    "historia de colombia",
-    "ciencia política",
-    "ciencias políticas",
-    "derecho",
-    "economía",
-    "educación",
-    "políticas públicas",
-    "america latina",
-    "américa latina",
-    "juventud",
-    "salud",
-    "género",
-    "democracia",
-    "participación"
-
-    }
+   
 
     for keyword in query_keywords:
 
@@ -89,41 +72,12 @@ def calculate_specialization_score(
 
             continue
 
-        words = len(
+        weight = 1
 
-            keyword.split()
-        )
-
-        # =========================
-        # PESO SEGÚN ESPECIFICIDAD
-        # =========================
-
-        if words >= 4:
-
+        if keyword in priority_keywords:
+        
             weight = 4
-
-        elif words == 3:
-
-            weight = 3
-
-        elif words == 2:
-
-            weight = 2
-
-        else:
-
-            weight = 1
-
-        # =========================
-        # PENALIZAR TÉRMINOS GENERALES
-        # =========================
-
-        if keyword in GENERAL_TERMS:
-
-            weight *= 0.5
-
-        max_possible += weight
-
+     
         # =========================
         # MATCH EXACTO
         # =========================
@@ -176,6 +130,7 @@ def calculate_match_score(
     row,
     full_query,
     keywords,
+    priority_keywords,
     thematic_weight,
     publication_weight
 ):
@@ -281,6 +236,7 @@ def calculate_match_score(
         calculate_specialization_score(
 
             keywords,
+            priority_keywords,
 
             topic,
 

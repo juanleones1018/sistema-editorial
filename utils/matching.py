@@ -105,9 +105,9 @@ def calculate_specialization_score(
 
     if max_possible == 0:
 
-    return 0
+        return 0
 
-        specialization_score = (
+    specialization_score = (
         
             matches
         
@@ -115,7 +115,7 @@ def calculate_specialization_score(
         
             max_possible
         
-        ) * 100
+    ) * 100
 
     return round(
 

@@ -16,7 +16,7 @@ def calculate_specialization_score(
     academic_profile=""
 ):
 
-    if not keywords:
+   if not keywords:
 
         return 0
 
@@ -32,6 +32,19 @@ def calculate_specialization_score(
     if not query_keywords:
 
         return 0
+
+    # =========================
+    # NORMALIZAR PRIORITARIAS
+    # =========================
+
+    priority_set = {
+
+        k.strip().lower()
+
+        for k in priority_keywords.split(",")
+
+        if k.strip()
+    }
 
     corpus = (
 
@@ -62,8 +75,6 @@ def calculate_specialization_score(
     matches = 0
     max_possible = 0
 
-   
-
     for keyword in query_keywords:
 
         keyword = keyword.strip().lower()
@@ -74,10 +85,16 @@ def calculate_specialization_score(
 
         weight = 1
 
-        if keyword in priority_keywords:
-        
+        # =========================
+        # PALABRAS PRIORITARIAS
+        # =========================
+
+        if keyword in priority_set:
+
             weight = 4
-     
+
+        max_possible += weight
+
         # =========================
         # MATCH EXACTO
         # =========================
@@ -108,13 +125,13 @@ def calculate_specialization_score(
         return 0
 
     specialization_score = (
-        
-            matches
-        
-            /
-        
-            max_possible
-        
+
+        matches
+
+        /
+
+        max_possible
+
     ) * 100
 
     return round(
@@ -318,13 +335,13 @@ def calculate_match_score(
 
         fuzzy_score
 
-        * 0.70
+        * 0.30
 
         +
 
         specialization_score
 
-        * 0.30
+        * 0.70
     )
 
     final_score = min(

@@ -18,28 +18,6 @@ def calculate_specialization_score(
 
         return 0
 
-    STOPWORDS = {
-
-        "historia",
-        "colombia",
-        "américa",
-        "america",
-        "latina",
-        "estado",
-        "guerra",
-        "política",
-        "politica",
-        "sociedad",
-        "social",
-        "cultura",
-        "desarrollo"
-
-    }
-
-    # =========================
-    # NORMALIZAR KEYWORDS
-    # =========================
-
     query_keywords = [
 
         keyword.strip().lower()
@@ -49,22 +27,9 @@ def calculate_specialization_score(
         if keyword.strip()
     ]
 
-    query_keywords = [
-
-        keyword
-
-        for keyword in query_keywords
-
-        if keyword not in STOPWORDS
-    ]
-
     if not query_keywords:
 
         return 0
-
-    # =========================
-    # CORPUS DEL EVALUADOR
-    # =========================
 
     corpus = (
 
@@ -78,31 +43,25 @@ def calculate_specialization_score(
 
         str(publications)
 
-    ).lower()
+    ).lower().strip()
 
-    # =========================
-    # BUSCAR COINCIDENCIAS
-    # =========================
+    if not corpus:
+
+        return 0
 
     matches = 0
     max_possible = 0
 
     for keyword in query_keywords:
 
-        keyword = keyword.strip()
-
-        if not keyword:
-
-            continue
-
-        # =========================
-        # PESO SEGÚN ESPECIFICIDAD
-        # =========================
-
         words = len(
 
             keyword.split()
         )
+
+        # =========================
+        # PESO SEGÚN ESPECIFICIDAD
+        # =========================
 
         if words >= 4:
 
@@ -119,6 +78,41 @@ def calculate_specialization_score(
         else:
 
             weight = 1
+
+        # =========================
+        # PENALIZAR TÉRMINOS GENERALES
+        # =========================
+
+        if (
+
+            words >= 2
+
+            and
+
+            fuzz.partial_ratio(
+
+                keyword,
+
+                corpus
+
+            ) >= 95
+
+            and
+
+            keyword in {
+
+                "historia de colombia",
+                "ciencia política",
+                "ciencias políticas",
+                "derecho",
+                "economía",
+                "educación",
+                "historia"
+            }
+
+        ):
+
+            weight *= 0.5
 
         max_possible += weight
 
@@ -146,10 +140,6 @@ def calculate_specialization_score(
         if similarity >= 90:
 
             matches += weight
-
-    # =========================
-    # SCORE 0–100
-    # =========================
 
     specialization_score = (
 
@@ -189,8 +179,10 @@ def calculate_match_score(
             "research_topic",
 
             ""
+
         )
-    )
+
+    ).strip()
 
     publications = str(
 
@@ -199,30 +191,52 @@ def calculate_match_score(
             "publications",
 
             ""
+
         )
-    )
+
+    ).strip()
+
+    # =========================
+    # EVITAR PERFILES VACÍOS
+    # =========================
+
+    if not topic and not publications:
+
+        return 0
 
     # =========================
     # AFINIDAD TEMÁTICA
     # =========================
 
-    topic_score = fuzz.token_set_ratio(
+    if topic:
 
-        full_query,
+        topic_score = fuzz.token_set_ratio(
 
-        topic
-    )
+            full_query,
+
+            topic
+        )
+
+    else:
+
+        topic_score = 0
 
     # =========================
     # PUBLICACIONES
     # =========================
 
-    publication_score = fuzz.token_set_ratio(
+    if publications:
 
-        full_query,
+        publication_score = fuzz.token_set_ratio(
 
-        publications
-    )
+            full_query,
+
+            publications
+        )
+
+    else:
+
+        publication_score = 0
 
     # =========================
     # ESPECIALIZACIÓN
@@ -308,13 +322,13 @@ def calculate_match_score(
 
         fuzzy_score
 
-        * 0.30
+        * 0.40
 
         +
 
         specialization_score
 
-        * 0.70
+        * 0.60
     )
 
     final_score = min(

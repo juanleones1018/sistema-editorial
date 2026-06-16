@@ -29,7 +29,7 @@ def calculate_specialization_score(
         if keyword.strip()
     ]
 
-    if not query_keywords:
+    if not keywords and not priority_keywords:
 
         return 0
 
@@ -39,11 +39,11 @@ def calculate_specialization_score(
 
     priority_set = {
 
-        k.strip().lower()
-
-        for k in priority_keywords.split(",")
-
-        if k.strip()
+        str(k).strip().lower()
+    
+        for k in (priority_keywords or [])
+    
+        if str(k).strip()
     }
 
     corpus = (

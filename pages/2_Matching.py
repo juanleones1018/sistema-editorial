@@ -370,7 +370,7 @@ if selected_degree != "Todos":
     ]
 if only_active:
 
-    active_ids = [
+    eligible_ids = [
 
         reviewer_id
 
@@ -379,13 +379,13 @@ if only_active:
             _
         ) in status_dict.items()
 
-        if status == "🟢 Activo"
+        if status != "🔴 Inactivo"
     ]
 
     filtered_df = filtered_df[
 
         filtered_df["id"].isin(
-            active_ids
+            eligible_ids
         )
     ]
 
@@ -588,49 +588,63 @@ if full_query.strip() and total_weight == 100:
                     )    
                     new_status = st.selectbox(
 
-                            "Actualizar estado",
-                        
-                            [
-                        
-                                "Sin cambios",
-                        
-                                "🟢 Activo",
-                        
-                                "🟡 Revisión editorial",
-                        
-                                "🔴 No disponible"
-                        
-                            ],
-                        
-                            key=f"status_{row['ID']}"
-                        )
+                        "Actualizar estado",
+                    
+                        [
+                    
+                            "Sin cambios",
+                    
+                            "🟢 Activo",
+                    
+                            "🟡 Revisión editorial",
+                    
+                            "🔴 No disponible"
+                    
+                        ],
+                    
+                        key=f"status_{row['ID']}"
+                    )
+                    
                     if st.button(
-
-                            "Guardar",
-                        
-                            key=f"save_{row['ID']}"
-                        ):
-                        
-                            if new_status != "Sin cambios":
-                        
-                                set_reviewer_status(
-                        
-                                    reviewer_id=row["ID"],
-                        
-                                    is_active=(
-                                        new_status == "🟢 Activo"
-                                    ),
-                        
-                                    source="Editorial",
-                        
-                                    notes=f"Actualizado desde Matching: {new_status}"
-                                )
-                        
-                                st.success(
-                                    "Estado actualizado."
-                                )
-                        
-                                st.rerun()
+                    
+                        "Guardar",
+                    
+                        key=f"save_{row['ID']}"
+                    ):
+                    
+                        if new_status != "Sin cambios":
+                    
+                            notes = (
+                    
+                                f"Actualizado desde Matching: "
+                    
+                                f"{new_status}"
+                            )
+                    
+                            if new_status == "🟢 Activo":
+                    
+                                is_active = True
+                    
+                            else:
+                    
+                                is_active = False
+                    
+                            set_reviewer_status(
+                    
+                                reviewer_id=row["ID"],
+                    
+                                is_active=is_active,
+                    
+                                source="Editorial",
+                    
+                                notes=notes
+                            )
+                    
+                            st.success(
+                                "Estado actualizado."
+                            )
+                    
+                            st.rerun()
                     st.code(
                         row["Correo"]
                     )

@@ -397,13 +397,20 @@ if only_active:
 # QUERY FINAL
 # =========================
 
-full_query = title.strip()
+full_query = (
+    f"{title} "
+    f"{query} "
+    f"{keywords}"
+)
 
-if query and query != "Describe el artículo, tema o enfoque de investigación...":
+query_keywords = [
 
-    full_query += f" {query.strip()}"
+    keyword.strip().lower()
 
-specialization_query = keywords.strip()
+    for keyword in keywords.split(",")
+
+    if keyword.strip().lower() not in GENERIC_KEYWORDS
+]
 # =========================
 # MATCHING
 # =========================
@@ -426,7 +433,7 @@ if full_query.strip() and total_weight == 100:
             row,
 
             full_query,
-            specialization_query,
+            query_keywords,
 
             thematic_weight,
 

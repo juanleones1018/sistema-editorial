@@ -413,7 +413,18 @@ full_query = (
 
     str(keywords)
 )
+specialization_query = (
 
+    str(title)
+
+    +
+
+    " "
+
+    +
+
+    str(keywords)
+)
 # =========================
 # MATCHING
 # =========================
@@ -436,6 +447,7 @@ if full_query.strip() and total_weight == 100:
             row,
 
             full_query,
+            specialization_query,
 
             thematic_weight,
 

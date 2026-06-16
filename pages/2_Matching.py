@@ -396,23 +396,9 @@ if only_active:
 # QUERY FINAL
 # =========================
 
-full_query = (
+full_query = title.strip()
 
-    f"{title} "
-
-    f"{title} "
-
-    f"{query} "
-
-    f"{keywords}"
-)
-
-specialization_query = (
-
-    f"{title},"
-
-    f"{keywords}"
-)
+specialization_query = keywords.strip()
 # =========================
 # MATCHING
 # =========================

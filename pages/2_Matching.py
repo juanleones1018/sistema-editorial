@@ -447,6 +447,7 @@ if full_query.strip() and total_weight == 100:
 
             full_query,
             specialization_query,
+            priority_keywords,
 
             thematic_weight,
 

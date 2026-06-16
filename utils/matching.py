@@ -76,15 +76,12 @@ def calculate_specialization_score(
     # SCORE 0–100
     # =========================
 
-    specialization_score = (
+    specialization_score = min(
 
-        matches
-
-        /
-
-        len(query_keywords)
-
-    ) * 100
+        matches * 30,
+    
+        100
+    )
 
     return round(
 

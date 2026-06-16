@@ -463,7 +463,7 @@ if full_query.strip() and total_weight == 100:
         
             (
                 "⚪ Sin verificar",
-                None
+                "Sin evidencia"
             )
         )
 

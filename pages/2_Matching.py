@@ -118,22 +118,9 @@ Describe el artículo, tema o enfoque de investigación...
         "Palabras clave separadas por coma"
     )
     priority_keywords = st.multiselect(
-
         "🎯 Palabras clave prioritarias",
-    
-        options=[
-    
-            k.strip()
-    
-            for k in keywords.split(",")
-    
-            if k.strip()
-        ],
-    
-        help="""
-    Selecciona las palabras clave más importantes para este artículo.
-    Estas tendrán mayor peso en el matching.
-    """
+        options=keywords.split(","),
+        default=[]
     )
 # =========================
 # PANEL DERECHO
@@ -446,7 +433,7 @@ if full_query.strip() and total_weight == 100:
             row,
 
             full_query,
-            specialization_query,
+            keywords,
             priority_keywords,
 
             thematic_weight,

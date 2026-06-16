@@ -398,6 +398,10 @@ if only_active:
 
 full_query = title.strip()
 
+if query and query != "Describe el artículo, tema o enfoque de investigación...":
+
+    full_query += f" {query.strip()}"
+
 specialization_query = keywords.strip()
 # =========================
 # MATCHING

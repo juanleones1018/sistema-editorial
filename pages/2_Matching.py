@@ -459,7 +459,7 @@ if full_query.strip() and total_weight == 100:
             row["id"],
         
             (
-                "🟡 Verificar",
+                "⚪ Sin verificar",
                 None
             )
         )

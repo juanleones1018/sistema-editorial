@@ -5,42 +5,7 @@ from utils.db import supabase
 # =========================
 # CARGAR REVIEWERS
 # =========================
-def load_reviewer_statuses():
 
-    response = supabase.table(
-        "reviewer_activity"
-    ).select(
-        "*"
-    ).order(
-        "checked_at",
-        desc=True
-    ).execute()
-
-    data = response.data
-
-    if not data:
-
-        return {}
-
-    statuses = {}
-
-    for item in data:
-
-        reviewer_id = item["reviewer_id"]
-
-        # Nos quedamos solo con el registro más reciente
-        if reviewer_id not in statuses:
-
-            statuses[reviewer_id] = (
-
-                "🟢 Activo"
-                if item["is_active"]
-                else "🔴 Inactivo",
-
-                item["source"]
-            )
-
-    return statuses
 def load_reviewers():
 
     all_data = []
@@ -127,43 +92,100 @@ def update_reviewer_activity(
     )
 
 
-def get_reviewer_status(
-    reviewer_id
-):
+def get_reviewer_status(reviewer_id):
 
-    try:
+    response = supabase.table(
+        "reviewer_activity"
+    ).select(
+        "*"
+    ).eq(
+        "reviewer_id",
+        reviewer_id
+    ).order(
+        "checked_at",
+        desc=True
+    ).limit(
+        1
+    ).execute()
 
-        activity = load_activity(
-            reviewer_id
-        )
-
-        if activity.empty:
-
-            return (
-                "🟡 Sin verificar",
-                None
-            )
-
-        latest = activity.iloc[0]
-
-        if latest["is_active"]:
-
-            return (
-                "🟢 Activo",
-                latest["source"]
-            )
+    if not response.data:
 
         return (
-            "🔴 Inactivo",
-            latest["source"]
+
+            "⚪ Sin verificar",
+
+            "Sin evidencia"
         )
 
-    except:
+    activity = response.data[0]
+
+    if activity["is_active"]:
 
         return (
+
+            "🟢 Activo",
+
+            activity["source"]
+        )
+
+    notes = str(
+        activity.get(
+            "notes",
+            ""
+        )
+    )
+
+    checked_by = str(
+        activity.get(
+            "checked_by",
+            ""
+        )
+    )
+
+    if "🟡 Revisión editorial" in notes:
+
+        return (
+
             "🟡 Verificar",
-            None
+
+            activity["source"]
         )
+
+    if (
+
+        "Sugerencia editorial" in notes
+
+        or
+
+        checked_by == "BOT"
+    ):
+
+        return (
+
+            "🟡 Verificar",
+
+            activity["source"]
+        )
+
+    if "🔴 No disponible" in notes:
+
+        return (
+
+            "🔴 Inactivo",
+
+            activity["source"]
+        )
+
+    # =========================
+    # CASO POR DEFECTO
+    # =========================
+
+    return (
+
+        "⚪ Sin verificar",
+
+        activity["source"]
+    )
 # =========================
 # ACTUALIZAR REVIEWER
 # =========================
@@ -194,52 +216,8 @@ def update_reviewer(
     )
 
     return response
-# =========================
-# INSERTAR ACTIVIDAD
-# =========================
 
-def insert_activity(
 
-    reviewer_id,
-
-    is_active,
-
-    source,
-
-    notes,
-
-    checked_by="Juan"
-):
-
-    response = (
-
-        supabase.table(
-            "reviewer_activity"
-        )
-
-        .insert({
-
-            "reviewer_id":
-                reviewer_id,
-
-            "is_active":
-                is_active,
-
-            "source":
-                source,
-
-            "notes":
-                notes,
-
-            "checked_by":
-                checked_by
-        })
-
-        .execute()
-    )
-
-    return response
-from utils.db import supabase
 def insert_activity(data):
 
     return (
@@ -269,23 +247,3 @@ def insert_reviewer(data):
     )
 
     return response
-def set_reviewer_status(
-    reviewer_id,
-    is_active,
-    source,
-    notes
-):
-
-    return supabase.table(
-        "reviewer_activity"
-    ).insert({
-
-        "reviewer_id": reviewer_id,
-
-        "is_active": is_active,
-
-        "source": source,
-
-        "notes": notes
-
-    }).execute()

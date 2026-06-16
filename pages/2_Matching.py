@@ -14,7 +14,7 @@ from utils.reviewers import (
     load_reviewers,
 
     
-    set_reviewer_status
+    get_reviewer_status
 )
 from utils.layout import (
 

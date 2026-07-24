@@ -103,7 +103,7 @@ Describe el artículo, tema o enfoque de investigación...
 
         keywords = st.text_input(
             "Palabras clave separadas por coma o punto y coma",
-            placeholder="Regeneración, Constitución de 1886, Guerra de los Mil Días",
+         
             key="matching_keywords"
         )
         st.caption(

@@ -1,4 +1,11 @@
 import streamlit as st
+
+st.set_page_config(
+    page_title="Gestión Evaluadores",
+    layout="wide",
+    initial_sidebar_state="expanded",
+)
+
 import pandas as pd
 from utils.auth import (
     login
@@ -29,16 +36,11 @@ render_sidebar()
 # CONFIG
 # =========================
 
-st.set_page_config(
-    page_title="Gestión Evaluadores",
-    layout="wide"
-)
-
 # =========================
 # LOAD DATA
 # =========================
 
-@st.cache_data
+@st.cache_data(ttl=60)
 def get_data():
 
     return load_reviewers()
@@ -151,10 +153,11 @@ with m3:
 with m4:
 
     st.metric(
-        "Departamentos",
-        df["department"].nunique()
-    )
 
+        "Departamentos",
+
+        df.get("department", pd.Series(dtype="object")).nunique()
+    )
 st.divider()
 
 # =========================
@@ -288,7 +291,9 @@ if search_name:
 
             case=False,
 
-            na=False
+            na=False,
+
+            regex=False,
         )
     ]
 
@@ -786,7 +791,7 @@ with st.form(
             "✅ Evaluador actualizado"
         )
 
-        st.cache_data.clear()
+        get_data.clear()
 
         st.rerun()
 
@@ -799,6 +804,12 @@ with st.form(
         is_active = (
             activity_status == "🟢 Activo"
         )
+
+        notes = activity_status
+
+        if activity_notes.strip():
+
+            notes = f"{activity_status}\n{activity_notes.strip()}"
     
         update_reviewer_activity(
     
@@ -808,7 +819,7 @@ with st.form(
     
             source=validation_source,
     
-            notes=activity_status,
+            notes=notes,
     
             checked_by="Juan"
         )

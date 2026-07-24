@@ -1,4 +1,11 @@
 import streamlit as st
+
+st.set_page_config(
+    page_title="Matching",
+    layout="wide",
+    initial_sidebar_state="expanded",
+)
+
 import pandas as pd
 from utils.auth import (
     login
@@ -7,7 +14,8 @@ from utils.auth import (
 if not login():
     st.stop()
 from utils.matching import (
-    calculate_match_score
+    calculate_match_score,
+    parse_keyword_list,
 )
 from utils.reviewers import (
 
@@ -16,9 +24,9 @@ from utils.reviewers import (
     load_reviewer_statuses,
 
     get_reviewer_status,
-    set_reviewer_status
+    set_reviewer_status,
+    update_reviewer,
 
-   
 )
 from utils.layout import (
 
@@ -35,39 +43,17 @@ render_sidebar()
 # CONFIG
 # =========================
 
-st.set_page_config(
-    page_title="Matching",
-    layout="wide"
-)
-
 # =========================
 # LOAD DATA
 # =========================
 
-@st.cache_data
+@st.cache_data(ttl=3600)
 def get_data():
-
     return load_reviewers()
 
-df = get_data()
-status_dict = load_reviewer_statuses()
-# =========================
-# VALIDAR
-# =========================
-
-if df.empty:
-
-    st.warning(
-        "No hay evaluadores"
-    )
-
-    st.stop()
-
-# =========================
-# LIMPIAR
-# =========================
-
-df = df.fillna("")
+@st.cache_data(ttl=3600)
+def get_statuses():
+    return load_reviewer_statuses()
 
 # =========================
 # HEADER
@@ -99,29 +85,44 @@ with left:
         "📄 Definir artículo / tema"
     )
 
-    title = st.text_input(
-        "Título artículo"
-    )
+    with st.form("matching_form"):
 
-    query = st.text_area(
+        title = st.text_input(
+            "Título artículo",
+            key="matching_title"
+        )
 
-        "Resumen / descripción",
-
-        height=220,
-
-        placeholder="""
+        query = st.text_area(
+            "Resumen / descripción",
+            height=220,
+            placeholder="""
 Describe el artículo, tema o enfoque de investigación...
-"""
-    )
+""",
+            key="matching_query"
+        )
 
-    keywords = st.text_input(
-        "Palabras clave separadas por coma"
-    )
-    priority_keywords = st.multiselect(
-        "🎯 Palabras clave prioritarias",
-        options=keywords.split(","),
-        default=[]
-    )
+        keywords = st.text_input(
+            "Palabras clave separadas por coma o punto y coma",
+            placeholder="Regeneración, Constitución de 1886, Guerra de los Mil Días",
+            key="matching_keywords"
+        )
+        st.caption(
+            "Puedes usar comas, punto y coma o saltos de línea. Si no usas separadores, el sistema intentará dividir términos cuando detecte mayúsculas unidas."
+        )
+
+        keyword_options = parse_keyword_list(keywords)
+
+        priority_keywords = st.multiselect(
+            "🎯 Palabras clave prioritarias",
+            options=keyword_options,
+            default=[],
+            key="matching_priority_keywords"
+        )
+
+        search_submitted = st.form_submit_button("Buscar evaluadores")
+
+    full_query = " ".join((title, query, keywords)).strip()
+
 # =========================
 # PANEL DERECHO
 # =========================
@@ -132,8 +133,26 @@ with right:
         "⚙️ Configuración"
     )
 
-    countries = sorted(
+    if st.button("Actualizar datos", key="refresh_matching"):
+        get_data.clear()
+        get_statuses.clear()
+        st.rerun()
 
+    with st.spinner("Cargando datos de evaluadores..."):
+        df = get_data()
+
+    with st.spinner("Cargando estados de actividad de evaluadores..."):
+        status_dict = get_statuses()
+
+    if df.empty:
+        st.warning(
+            "No hay evaluadores"
+        )
+        st.stop()
+
+    df = df.fillna("")
+
+    countries = sorted(
         df["country"]
         .dropna()
         .unique()
@@ -387,7 +406,7 @@ if only_active:
             _
         ) in status_dict.items()
 
-        if status != "🔴 Inactivo"
+        if status == "🟢 Activo"
     ]
 
     filtered_df = filtered_df[
@@ -428,6 +447,16 @@ if full_query.strip() and total_weight == 100:
             )
         )
 
+        status, source = status_dict.get(
+
+            row["id"],
+        
+            (
+                "⚪ Sin verificar",
+                "Sin evidencia"
+            )
+        )
+
         final_score = calculate_match_score(
 
             row,
@@ -438,17 +467,15 @@ if full_query.strip() and total_weight == 100:
 
             thematic_weight,
 
-            publication_weight
-        )
+            publication_weight,
 
-        status, source = status_dict.get(
+            activity_weight,
 
-            row["id"],
-        
-            (
-                "⚪ Sin verificar",
-                "Sin evidencia"
-            )
+            evidence_weight,
+
+            status,
+
+            source,
         )
 
         # =========================
@@ -556,170 +583,180 @@ if full_query.strip() and total_weight == 100:
         for idx, row in results_df.iterrows():
 
             with st.container():
-
+ 
                 top, bottom = st.columns([5, 1])
-
+ 
                 with top:
-
+ 
                     st.markdown(
                         f"### 👨‍🏫 {row['Nombre']}"
                     )
-
+ 
                     st.caption(
-
                         f"""
-🏛 {row['Institución']} • 🌎 {row['País']}
+                🏛 {row['Institución']} • 🌎 {row['País']}
+ 
+                {row['Estado']}
+                """
+                    )
 
-{row['Estado']}
-"""
-                    )    
+                    with st.expander("Editar datos del evaluador", expanded=False):
+                        full_name = st.text_input(
+                            "Nombre",
+                            value=row["Nombre"],
+                            key=f"name_{row['ID']}"
+                        )
+                        email = st.text_input(
+                            "Correo",
+                            value=row["Correo"],
+                            key=f"email_{row['ID']}"
+                        )
+                        institution = st.text_input(
+                            "Institución",
+                            value=row["Institución"],
+                            key=f"institution_{row['ID']}"
+                        )
+                        country = st.text_input(
+                            "País",
+                            value=row["País"],
+                            key=f"country_{row['ID']}"
+                        )
+                        degree = st.text_input(
+                            "Grado",
+                            value=row["Grado"],
+                            key=f"degree_{row['ID']}"
+                        )
+                        formation = st.text_input(
+                            "Formación",
+                            value=row["Formación"],
+                            key=f"formation_{row['ID']}"
+                        )
+                        publications = st.text_area(
+                            "Publicaciones",
+                            value=row["Publicaciones"],
+                            height=180,
+                            key=f"publications_{row['ID']}"
+                        )
+                        research_topic = st.text_area(
+                            "Tema",
+                            value=row["Tema"],
+                            height=180,
+                            key=f"topic_{row['ID']}"
+                        )
+                        save_reviewer = st.button(
+                            "Guardar cambios",
+                            key=f"save_reviewer_{row['ID']}"
+                        )
+
+                        if save_reviewer:
+                            updated_data = {
+                                "full_name": full_name,
+                                "email": email,
+                                "institution": institution,
+                                "country": country,
+                                "academic_degree_level": degree,
+                                "academic_degree": formation,
+                                "publications": publications,
+                                "research_topic": research_topic,
+                            }
+                            update_reviewer(row["ID"], updated_data)
+                            get_data.clear()
+                            st.success("Cambios guardados")
+                            st.rerun()
+
                     new_status = st.selectbox(
-
                         "Actualizar estado",
-                    
                         [
-                    
                             "Sin cambios",
-                    
-                            "🟢 Activo",
-                    
-                            "🟡 Revisión editorial",
-                    
-                            "🔴 No disponible"
-                    
+                            "Activo",
+                            "Revisión editorial",
+                            "No disponible"
                         ],
-                    
                         key=f"status_{row['ID']}"
                     )
-                    
                     if st.button(
-                    
                         "Guardar",
-                    
                         key=f"save_{row['ID']}"
                     ):
-                    
                         if new_status != "Sin cambios":
-                    
                             notes = (
-                    
                                 f"Actualizado desde Matching: "
-                    
                                 f"{new_status}"
                             )
-                    
-                            if new_status == "🟢 Activo":
-                    
-                                is_active = True
-                    
-                            else:
-                    
-                                is_active = False
-                    
+                            is_active = new_status == "Activo"
                             set_reviewer_status(
-                    
                                 reviewer_id=row["ID"],
-                    
                                 is_active=is_active,
-                    
                                 source="Editorial",
-                    
                                 notes=notes
                             )
-                    
+                            get_statuses.clear()
                             st.success(
                                 "Estado actualizado."
                             )
-                    
                             st.rerun()
                     st.code(
                         row["Correo"]
                     )
+ 
+                badge1, badge2, badge3 = st.columns(3)
 
-                    badge1, badge2, badge3 = st.columns(3)
+                with badge1:
+                    st.success(
+                        f"🎓 {row['Grado']}"
+                    )
 
-                    with badge1:
+                with badge2:
+                    st.info(
+                        f"📅 {row['Última publicación']}"
+                    )
 
+                with badge3:
+                    if row["Score"] >= 70:
                         st.success(
-                            f"🎓 {row['Grado']}"
+                            "⭐ Alta afinidad"
                         )
-
-                    with badge2:
-
+                    elif row["Score"] >= 50:
+                        st.warning(
+                            "🟡 Afinidad media"
+                        )
+                    elif row["Score"] >= 35:
                         st.info(
-                            f"📅 {row['Última publicación']}"
+                            "🔵 Afinidad relevante"
                         )
-
-                    with badge3:
-
-                        if row["Score"] >= 70:
-                    
-                            st.success(
-                                "⭐ Alta afinidad"
-                            )
-                    
-                        elif row["Score"] >= 50:
-                    
-                            st.warning(
-                                "🟡 Afinidad media"
-                            )
-                    
-                        elif row["Score"] >= 35:
-                    
-                            st.info(
-                                "🔵 Afinidad relevante"
-                            )
-                    
-                        else:
-                    
-                            st.error(
-                                "🔴 Afinidad baja"
-                            )
+                    else:
+                        st.error(
+                            "🔴 Afinidad baja"
+                        )
 
                 with bottom:
-
                     st.metric(
-
                         "Score",
-
                         f"{row['Score']}"
                     )
 
                 st.progress(
-
                     min(
-
                         row["Score"] / 100,
-
                         1.0
                     )
                 )
 
-                with st.expander(
+                with st.expander("🔬 Ver tema de investigación"):
+                    st.write(row["Tema"])
 
-                    "🔬 Ver tema de investigación"
-                ):
-
-                    st.write(
-                        row["Tema"]
-                    )
-                with st.expander(
-                    "🎓 Ver formación académica"
-                 ):
-                    
+                with st.expander("🎓 Ver formación académica"):
                     st.markdown(
-                            f"""
-                            **Nivel:** {row['Grado']}
-                            
-                            **Título:** {row['Formación']}
-                            """
+                        f"""
+                        **Nivel:** {row['Grado']}
+                        
+                        **Título:** {row['Formación']}
+                        """
                     )
-                with st.expander(
-                        "📚 Ver publicaciones"
-                 ):
-                        st.write(
-                           row["Publicaciones"]
-                    )
+
+                with st.expander("📚 Ver publicaciones"):
+                    st.write(row["Publicaciones"])
+
                 st.divider()
 
 else:

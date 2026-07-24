@@ -1,4 +1,11 @@
 import streamlit as st
+
+st.set_page_config(
+    page_title="Sistema Editorial",
+    layout="wide",
+    initial_sidebar_state="expanded",
+)
+
 import pandas as pd
 import plotly.express as px
 
@@ -16,37 +23,6 @@ if not login():
 # CONFIG
 # =========================
 
-st.set_page_config(
-
-    page_title="Sistema Editorial",
-
-    layout="wide",
-
-    initial_sidebar_state="expanded"
-)
-
-
-
-hide_streamlit_style = """
-
-<style>
-
-[data-testid="stSidebarNav"] {
-
-    display: none;
-}
-
-</style>
-
-"""
-
-st.markdown(
-
-    hide_streamlit_style,
-
-    unsafe_allow_html=True
-)
-
 from utils.layout import (
 
     setup_page,
@@ -62,10 +38,16 @@ render_sidebar()
 # DATA
 # =========================
 
-@st.cache_data
+@st.cache_data(ttl=60)
 def get_data():
 
     return load_reviewers()
+
+if st.button("Actualizar datos", key="refresh_dashboard"):
+
+    get_data.clear()
+
+    st.rerun()
 
 df = get_data()
 

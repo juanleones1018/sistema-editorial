@@ -34,6 +34,33 @@ from utils.layout import (
 
     render_sidebar
 )
+
+
+def format_publications_for_display(publications_value):
+    """Devuelve una lista de publicaciones legible para mostrar en la UI."""
+
+    if publications_value is None:
+        return []
+
+    if isinstance(publications_value, list):
+        entries = [str(item).strip() for item in publications_value if str(item).strip()]
+        return entries
+
+    text = str(publications_value).strip()
+
+    if not text:
+        return []
+
+    entries = [item.strip() for item in text.splitlines() if item.strip()]
+
+    if len(entries) == 1:
+        candidate = entries[0]
+        if ";" in candidate:
+            entries = [item.strip() for item in candidate.split(";") if item.strip()]
+
+    return entries
+
+
 setup_page(
     "Búsqueda"
 )
@@ -103,7 +130,7 @@ Describe el artículo, tema o enfoque de investigación...
 
         keywords = st.text_input(
             "Palabras clave separadas por coma o punto y coma",
-         
+            placeholder="Regeneración, Constitución de 1886, Guerra de los Mil Días",
             key="matching_keywords"
         )
         st.caption(
@@ -755,7 +782,16 @@ if full_query.strip() and total_weight == 100:
                     )
 
                 with st.expander("📚 Ver publicaciones"):
-                    st.write(row["Publicaciones"])
+                    publications = format_publications_for_display(row["Publicaciones"])
+
+                    if publications:
+                        st.markdown(
+                            "\n".join(
+                                f"- {publication}" for publication in publications
+                            )
+                        )
+                    else:
+                        st.info("No hay publicaciones registradas")
 
                 st.divider()
 
